@@ -9,6 +9,10 @@ angular.module('thisApp.home', ['ngRoute'])
   })
 }])
 
-.controller('HomeController', function($scope, $location) {
-
+.controller('HomeController', function($scope, $location, FacetFactory) {
+  const ff = FacetFactory;
+  let f = ff.newFacet('jedi', {compute:function(){return {name:'Anakin Skywalker'}}});
+  f.obtainData(function(d){
+    console.log('Data:',d.name, d)
+  })
 });

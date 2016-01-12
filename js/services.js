@@ -4,7 +4,7 @@
 
 angular.module('thisApp.services', [])
   
-  .factory('FacetFactory', function ($timeout, $http) {
+  .factory('FacetFactory', function () {
     // Namespace
     let ns = {};
 
@@ -45,7 +45,7 @@ angular.module('thisApp.services', [])
      *    newFacet('jediLastName', {
      *      dependencies:['jedi'],
      *      compute: function(){
-     *        return getFacet('jedi').getData().split(' ')[1]
+     *        return getFacet('jedi').getData().name.split(' ')[1]
      *      }
      *    })
      */
@@ -58,28 +58,39 @@ angular.module('thisApp.services', [])
           /**
            * Facet lifecycle:
            * 1. Is it ready? YES: get the data. NO: go deeper.
-           * 2. Is it loadable? YES: load the data (it's a cache). NO: go deeper.
+           * 2. Is it cached? YES: load the data. NO: go deeper.
            * 3. Are dependencies ready? YES: compute the data.
            *    NO: Get the dependencies, then compute the data.
            *
            * NOTE: Loadability, compute method and dependencies have to be managed elsewhere.
-           *       The facet is just a helper, it just organizes the life cycle.
+           *       The facet object is just a helper to organize the lifecycle.
            */
+          if (opts.data === undefined && !opts.cached && (opts.compute === undefined || typeof opts.compute !== 'function') ) {
+            console.log(`Impossible to create facet without data OR cache OR a compute method. id:${id}`, facet);
+            return;
+          }
           facet.id = id;
           facet.data = undefined
           facet.ready = false;
-          facet.loadable = opts.cached || false;
+          facet.cached = false;
           facet.needsSerialization = false;
-          facet.dependencies = opts.dependencies || [];
-          facet._compute = opts.computeMethod;
+          facet.dependencies = [];
+          facet._compute = opts.compute;
 
-          if (facet._compute === undefined || typeof facet._compute !== 'function') {
-            console.log(`Impossible to create facet without a compute method. id:${id}`);
-            return;
+          if (opts.cached) {
+            facet.cached = true;
           }
 
-          if (typeof facet.dependencies !== 'array') {
-            console.log(`Impossible to create facet because dependencies are not an array. id:${id}`);
+          if (opts.dependencies) {
+            if (Array.isArray(opts.dependencies)) {
+              facet.dependencies = opts.dependencies;
+            } else {
+              console.log(`Dependencies not added because they are not an array. Facet id:${id}`, facet);
+            }
+          }
+
+          if (!Array.isArray(facet.dependencies)) {
+            console.log(`Impossible to create facet because dependencies are not an array. id:${id}`, facet);
             return;
           }
 
@@ -89,16 +100,29 @@ angular.module('thisApp.services', [])
           }
           
           facet.isReady = () => facet.ready;
-          facet.isLoadable = () => !!facet.loadable;
+          facet.isCached = () => !!facet.cached;
           // Alias for commodity
-          facet.isCached = facet.isLoadable;
+          facet.isCached = facet.isCached;
           facet.getDependencies = () => facet.dependencies;
+
+          facet.obtainData = function (callback) {
+            if (facet.isReady()) {
+              facet.callData(callback);
+            } else if (facet.isCached()) {
+              facet.loadData(callback);
+            } else if (facet.areDependenciesReady()) {
+              facet.computeData(callback);
+            } else {
+              console.log(`Impossible to obtain facet because it is neither ready, ' +
+                'cached nor computable since dependencies are not ready. id: ${id}`, facet);
+            }
+          }
 
           facet.getData = function () {
             if (facet.isReady()) {
               return facet.data;
             } else {
-              console.log(`Impossible to get data because this facet is not ready: ${facet.id}`);
+              console.log(`Impossible to get data because this facet is not ready: ${facet.id}`, facet);
             }
           }
 
@@ -107,27 +131,27 @@ angular.module('thisApp.services', [])
             if (facet.isReady()) {
               callback(facet.data);
             } else {
-              console.log(`Impossible to call data because this facet is not ready: ${facet.id}`);
+              console.log(`Impossible to call data because this facet is not ready: ${facet.id}`, facet);
             }
           }
 
-          facet.load = function (callback) {
-            if (facet.isLoadable()) {
+          facet.loadData = function (callback) {
+            if (facet.isCached()) {
               if (!facet.needsSerialization) {
                 let url = ns.getFacetCacheURL(facet.id);
                 $.get(url, function(d){
-                  facet.data = d;
+                  facet.data = JSON.parse(d);
                   facet.ready = true;
                   callback(facet.data);
                 }).fail(function() {
-                    console.log(`Facet loading failed for unknown reasons.\nid:${id}\nurl:${url}`);
+                    console.log(`Facet loading failed for unknown reasons.\nid:${id}\nurl:${url}`, facet);
                   })
               } else {
                 // TODO: implement serialization
-                console.log(`Serialization not implemented.`);
+                console.log(`Serialization not implemented.`, facet);
               }
             } else {
-              console.log(`Unloadable facet: ${id}`);
+              console.log(`Unloadable facet: ${id}`, facet);
             }
           }
 
@@ -145,23 +169,23 @@ angular.module('thisApp.services', [])
             return ready;
           }
 
-          facet.compute = function (callback) {
+          facet.computeData = function (callback) {
             if (facet.areDependenciesReady()) {
-              facet.data = facet.compute();
+              facet.data = facet._compute();
               facet.ready = true;
               callback(facet.data);
             } else {
-              console.log(`Facet not computed because dependencies are not ready. id: ${id}`);
+              console.log(`Facet not computed because dependencies are not ready. id: ${id}`, facet);
             }
           }
 
           ns.facetDictionary[facet.id] = facet;
           return facet;
         } else {
-          console.log(`Facet not created because its id already exists: ${id}`);
+          console.log(`Facet not created because its id already exists: ${id}`, facet);
         }
       } else {
-        console.log('Facet not created because it has no id');
+        console.log('Facet not created because it has no id', facet);
       }
     }
 
@@ -182,7 +206,7 @@ angular.module('thisApp.services', [])
         let safeId = encodeURIComponent(id);
         return `${ns.cacheLocation}${safeId}`;
       } else {
-        console.log(`Cannot retrieve cache URL from id ${id}`);
+        console.log(`Cannot retrieve cache URL from id ${id}`, facet);
       }
     }
 
