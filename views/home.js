@@ -10,9 +10,8 @@ angular.module('thisApp.home', ['ngRoute'])
 }])
 
 .controller('HomeController', function($scope, $location, FacetFactory) {
-  const ff = FacetFactory;
-  let f = ff.newFacet('jedi', {compute:function(){return {name:'Anakin Skywalker'}}});
-  f.obtainData(function(d){
-    console.log('Data:',d.name, d)
+  let all = FacetFactory.newFacet('tweets.csv', {cached:true, dataFormat:'csv'});
+  all.obtainData(function(d){
+    console.log('Data:', d);
   })
 });

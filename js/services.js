@@ -71,15 +71,16 @@ angular.module('thisApp.services', [])
           }
           facet.id = id;
           facet.data = undefined
+          facet.serialize = undefined
+          facet.unserialize = undefined
           facet.ready = false;
           facet.cached = false;
-          facet.needsSerialization = false;
           facet.dependencies = [];
           facet._compute = opts.compute;
+          facet.dataFormat = 'json'
 
-          if (opts.cached) {
-            facet.cached = true;
-          }
+          // Check and apply options
+          if (opts.cached) { facet.cached = true; }
 
           if (opts.dependencies) {
             if (Array.isArray(opts.dependencies)) {
@@ -98,11 +99,37 @@ angular.module('thisApp.services', [])
             facet.data = opts.data;
             facet.ready = true;
           }
+
+          if (opts.dataFormat) {
+            switch (opts.dataFormat) {
+              case 'json':
+                facet.unserialize = JSON.parse;
+                facet.serialize = JSON.stringify;
+                break;
+              case 'csv':
+                facet.unserialize = d3.csv.parse;
+                facet.serialize = d3.csv.format;
+                break;
+              case 'csvRows':
+                facet.unserialize = d3.csv.parseRows;
+                facet.serialize = d3.csv.formatRows;
+                break;
+              default:
+                console.log(`Unknown dataFormat ${opts.dataFormat} for facet ${id}`)
+                break;
+            }
+          }
+
+          if (opts.serialize) {
+            facet.serialize = opts.serialize
+          }
+
+          if (opts.unserialize) {
+            facet.unserialize = opts.unserialize
+          }
           
           facet.isReady = () => facet.ready;
           facet.isCached = () => !!facet.cached;
-          // Alias for commodity
-          facet.isCached = facet.isCached;
           facet.getDependencies = () => facet.dependencies;
 
           facet.obtainData = function (callback) {
@@ -137,19 +164,14 @@ angular.module('thisApp.services', [])
 
           facet.loadData = function (callback) {
             if (facet.isCached()) {
-              if (!facet.needsSerialization) {
-                let url = ns.getFacetCacheURL(facet.id);
-                $.get(url, function(d){
-                  facet.data = JSON.parse(d);
-                  facet.ready = true;
-                  callback(facet.data);
-                }).fail(function() {
-                    console.log(`Facet loading failed for unknown reasons.\nid:${id}\nurl:${url}`, facet);
-                  })
-              } else {
-                // TODO: implement serialization
-                console.log(`Serialization not implemented.`, facet);
-              }
+              let url = ns.getFacetCacheURL(facet.id);
+              $.get(url, function(d){
+                facet.data = facet.unserialize(d);
+                facet.ready = true;
+                callback(facet.data);
+              }).fail(function() {
+                  console.log(`Facet loading failed for unknown reasons.\nid:${id}\nurl:${url}`, facet);
+                })
             } else {
               console.log(`Unloadable facet: ${id}`, facet);
             }
