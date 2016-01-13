@@ -23,6 +23,12 @@ angular.module('thisApp.services', [])
       return result;
     }
 
+    ns.requireFacet = function (id, opts_) {
+      let f = ns.getFacet(id);
+      if (f) return f;
+      return ns.newFacet(id, opts_);
+    }
+
     ns.getFacet = function (id) {
       return ns.facetDictionary[id];
     }
@@ -70,14 +76,16 @@ angular.module('thisApp.services', [])
             return;
           }
           facet.id = id;
-          facet.data = undefined
-          facet.serialize = undefined
-          facet.unserialize = undefined
+          facet.data = undefined;
+          facet.serialize = x => x;
+          facet.unserialize = x => x;
+          facet.formatSerialize = undefined;
+          facet.formatUnserialize = undefined;
           facet.ready = false;
           facet.cached = false;
           facet.dependencies = [];
           facet._compute = opts.compute;
-          facet.dataFormat = 'json'
+          facet.dataFormat = 'json';
 
           // Check and apply options
           if (opts.cached) { facet.cached = true; }
@@ -103,16 +111,16 @@ angular.module('thisApp.services', [])
           if (opts.dataFormat) {
             switch (opts.dataFormat) {
               case 'json':
-                facet.unserialize = JSON.parse;
-                facet.serialize = JSON.stringify;
+                facet.formatUnserialize = JSON.parse;
+                facet.formatSerialize = JSON.stringify;
                 break;
               case 'csv':
-                facet.unserialize = d3.csv.parse;
-                facet.serialize = d3.csv.format;
+                facet.formatUnserialize = d3.csv.parse;
+                facet.formatSerialize = d3.csv.format;
                 break;
               case 'csvRows':
-                facet.unserialize = d3.csv.parseRows;
-                facet.serialize = d3.csv.formatRows;
+                facet.formatUnserialize = d3.csv.parseRows;
+                facet.formatSerialize = d3.csv.formatRows;
                 break;
               default:
                 console.log(`Unknown dataFormat ${opts.dataFormat} for facet ${id}`)
@@ -177,7 +185,7 @@ angular.module('thisApp.services', [])
             if (facet.isCached()) {
               let url = ns.getFacetCacheURL(facet.id);
               $.get(url, function(d){
-                facet.data = facet.unserialize(d);
+                facet.data = facet.formatUnserialize(d);
                 facet.ready = true;
                 callback(facet.data);
               }).fail(function() {
