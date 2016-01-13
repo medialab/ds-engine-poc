@@ -4,6 +4,61 @@
 
 angular.module('thisApp.services', [])
   
+  // Facets declaration
+  .factory('Facets', function (FacetFactory) {
+    // Namespace
+    let ns = {};
+
+    ns.factory = FacetFactory;
+
+    // Below we declare a series of facets we use in this project
+    // The source of all data in there
+    ns.tweets_csv = FacetFactory.newFacet('tweets.csv', {cached:true, dataFormat:'csv'});
+
+    // The clean and rich list of tweets
+    ns.tweetList = FacetFactory.newFacet('tweetList', {
+      dependencies:['tweets.csv'],
+      compute: function(){
+        let tweets_csvData = FacetFactory.getFacet('tweets.csv').getData();
+        let data = [...tweets_csvData].map(item => {
+          item.time = new Date(item.time * 1000);
+          item.created_at = new Date(item.created_at);
+          return item;
+        });
+        console.log(data);
+        return data;
+      },
+      serialize: function (data) {
+        return data.map(serializeTweet);
+      },
+      unserialize: function (data) {
+        return data.map(unserializeTweet);
+      },
+    });
+    
+    ns.tweetCount = FacetFactory.newFacet('tweetCount', {
+      dependencies:['tweetList'],
+      compute: function(){
+        return FacetFactory.getFacet('tweetList').getData().length;
+      },
+    })
+
+    // Tweet serialization
+    function serializeTweet(item) {
+      item.time = item.time.toISOString();
+      item.created_at = item.created_at.toISOString();
+      return item;
+    }
+
+    function unserializeTweet(item) {
+      item.time = new Date(item.time);
+      item.created_at = new Date(item.created_at);
+      return item;
+    }
+
+    return ns;
+  })
+
   .factory('FacetFactory', function () {
     // Namespace
     let ns = {};
