@@ -25,33 +25,43 @@ angular.module('thisApp.services', [])
       compute: function(){
         let tweets_csvData = FacetFactory.getFacet('tweets.csv').getData();
         let data = [...tweets_csvData].map(item => {
+          let result = {};
           // Time & Dates
-          item.time = new Date(item.time * 1000);
-          item.created_at = new Date(item.created_at);
-          item.from_user_created_at = new Date(item.from_user_created_at);
+          result.time = new Date(item.time * 1000);
+          // result.created_at = new Date(item.created_at);
+          result.from_user_created_at = new Date(item.from_user_created_at);
           
           // Numbers
-          item.retweet_count = parseInt(item.retweet_count, 10);
-          item.favorite_count = parseInt(item.favorite_count, 10);
-          item.from_user_tweetcount = parseInt(item.from_user_tweetcount, 10);
-          item.from_user_followercount = parseInt(item.from_user_followercount, 10);
-          item.from_user_friendcount = parseInt(item.from_user_friendcount, 10);
-          item.from_user_favourites_count = parseInt(item.from_user_favourites_count, 10);
-          item.from_user_listed = parseInt(item.from_user_listed, 10);
+          result.retweet_count = parseInt(item.retweet_count, 10);
+          result.favorite_count = parseInt(item.favorite_count, 10);
+          result.from_user_tweetcount = parseInt(item.from_user_tweetcount, 10);
+          result.from_user_followercount = parseInt(item.from_user_followercount, 10);
+          result.from_user_friendcount = parseInt(item.from_user_friendcount, 10);
+          result.from_user_favourites_count = parseInt(item.from_user_favourites_count, 10);
+          result.from_user_listed = parseInt(item.from_user_listed, 10);
 
           // Extract hashtags
-          item.hashtags = item.text.match(/[#]+[A-Za-z0-9-_]+/g) || [];
+          // result.hashtags = item.text.match(/[#]+[A-Za-z0-9-_]+/g) || [];
 
-          // Extract mentions
-          item.mentions = item.text.match(/[@]+[A-Za-z0-9-_]+/g) || [];
+          // // Extract mentions
+          // result.mentions = item.text.match(/[@]+[A-Za-z0-9-_]+/g) || [];
 
-          // Extract words
-          let text = item.text;
-          item.hashtags.forEach(d => text = text.replace(d, d.substr(1,d.length)) );
-          item.mentions.forEach(d => text = text.replace(d, d.substr(1,d.length)) );
-          item.words = text.split(/\W+/);
+          // // Extract words
+          // let text = item.text;
+          // result.hashtags.forEach(d => text = text.replace(d, d.substr(1,d.length)) );
+          // result.mentions.forEach(d => text = text.replace(d, d.substr(1,d.length)) );
+          // result.words = text.split(/\W+/);
 
-          return item;
+          // Other transfered attributes
+          [
+            'text',
+            'lang',
+            'location',
+            'from_user_id',
+            'from_user_realname',
+          ].forEach(k => {result[k] = item[k]})
+
+          return result;
         });
         return data;
       },
@@ -85,7 +95,7 @@ angular.module('thisApp.services', [])
     function serializeTweet(item) {
       // Time & Dates
       item.time = item.time.toISOString();
-      item.created_at = item.created_at.toISOString();
+      // item.created_at = item.created_at.toISOString();
       item.from_user_created_at = item.from_user_created_at.toISOString();
 
       // Numbers: no need to serialize
@@ -96,7 +106,7 @@ angular.module('thisApp.services', [])
     function unserializeTweet(item) {
       // Time & Dates
       item.time = new Date(item.time);
-      item.created_at = new Date(item.created_at);
+      // item.created_at = new Date(item.created_at);
       item.from_user_created_at = new Date(item.from_user_created_at);
 
       // Numbers
@@ -258,10 +268,13 @@ angular.module('thisApp.services', [])
 
           facet.retrieveData = function (callback) {
             if (facet.isReady()) {
+              console.log(`retrieve data: CALL ${facet.id}`);
               facet.callData(callback);
             } else if (facet.isCached()) {
+              console.log(`retrieve data: LOAD ${facet.id}`);
               facet.loadData(callback);
             } else if (facet.areDependenciesReady()) {
+              console.log(`retrieve data: COMPUTE ${facet.id}`);
               facet.computeData(callback);
             } else {
               let unreadyDependency = facet.dependencies.some(id => {
@@ -271,6 +284,7 @@ angular.module('thisApp.services', [])
                   return false;
                 } else {
                   // Dependency needs to be retrieved
+                  console.log(`retrieve data: COMPUTE DEPENDENCY ${dependencyFacet.id} of ${facet.id}`);
                   dependencyFacet.retrieveData(() => {
                     facet.retrieveData(callback);
                   })
@@ -380,10 +394,16 @@ angular.module('thisApp.services', [])
     window._FacetFactory_downloadCacheables = function () {
       ns.getFacetList().forEach(facet => {
         if (facet.isReady() && !facet.isCached() && !facet.isUncacheable()) {
-          console.log(`Download cacheable facet ${facet.id}`)
-          facet.download()
+          // Keep facet
+        } else {
+          // delete
+          ns.deleteFacet(facet.id);
         }
       });
+      ns.getFacetList().forEach(facet => {
+        console.log(`Download cacheable facet ${facet.id}`)
+        facet.download()
+      })
     }
 
     return ns;
