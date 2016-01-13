@@ -18,7 +18,10 @@ angular.module('thisApp.services', [])
 
     // The clean and rich list of tweets
     ns.tweetList = FacetFactory.newFacet('tweetList', {
+      cached: true,
       dependencies:['tweets.csv'],
+      // Optional, because implicit, but it is clearer to specify it
+      type: 'json',
       compute: function(){
         let tweets_csvData = FacetFactory.getFacet('tweets.csv').getData();
         let data = [...tweets_csvData].map(item => {
@@ -50,7 +53,6 @@ angular.module('thisApp.services', [])
 
           return item;
         });
-        console.log(data);
         return data;
       },
       serialize: function (data) {
@@ -73,6 +75,7 @@ angular.module('thisApp.services', [])
     // Various simple facets
     ns.tweetCount = FacetFactory.newFacet('tweetCount', {
       dependencies: ['tweetList'],
+      uncacheable: true,
       compute: function(){
         return FacetFactory.getFacet('tweetList').getData().length;
       },
@@ -86,11 +89,6 @@ angular.module('thisApp.services', [])
       item.from_user_created_at = item.from_user_created_at.toISOString();
 
       // Numbers: no need to serialize
-
-      // Rich contents
-      item.hashtags = JSON.stringify(item.hashtags);
-      item.mentions = JSON.stringify(item.mentions);
-      item.words = JSON.stringify(item.words);
 
       return item;
     }
@@ -109,11 +107,6 @@ angular.module('thisApp.services', [])
       item.from_user_friendcount = parseInt(item.from_user_friendcount, 10);
       item.from_user_favourites_count = parseInt(item.from_user_favourites_count, 10);
       item.from_user_listed = parseInt(item.from_user_listed, 10);
-
-      // Rich contents
-      item.hashtags = JSON.parse(item.hashtags);
-      item.mentions = JSON.parse(item.mentions);
-      item.words = JSON.parse(item.words);
 
       return item;
     }
@@ -200,12 +193,14 @@ angular.module('thisApp.services', [])
           facet.formatUnserialize = undefined;
           facet.ready = false;
           facet.cached = false;
+          facet.uncacheable = false;
           facet.dependencies = [];
           facet._compute = opts.compute;
           facet.dataFormat = 'json';
 
           // Check and apply options
           if (opts.cached) { facet.cached = true; }
+          if (opts.uncacheable) { facet.uncacheable = true; }
 
           if (opts.dependencies) {
             if (Array.isArray(opts.dependencies)) {
@@ -243,6 +238,9 @@ angular.module('thisApp.services', [])
                 console.log(`Unknown dataFormat ${opts.dataFormat} for facet ${id}`)
                 break;
             }
+          } else {
+            facet.formatUnserialize = JSON.parse;
+            facet.formatSerialize = JSON.stringify;
           }
 
           if (opts.serialize) {
@@ -255,6 +253,7 @@ angular.module('thisApp.services', [])
           
           facet.isReady = () => facet.ready;
           facet.isCached = () => !!facet.cached;
+          facet.isUncacheable = () => !!facet.uncacheable;
           facet.getDependencies = () => facet.dependencies;
 
           facet.retrieveData = function (callback) {
@@ -302,7 +301,7 @@ angular.module('thisApp.services', [])
             if (facet.isCached()) {
               let url = ns.getFacetCacheURL(facet.id);
               $.get(url, function(d){
-                facet.data = facet.formatUnserialize(d);
+                facet.data = facet.unserialize(facet.formatUnserialize(d));
                 facet.ready = true;
                 callback(facet.data);
               }).fail(function() {
@@ -337,6 +336,12 @@ angular.module('thisApp.services', [])
             }
           }
 
+          facet.download = function () {
+            let data = facet.formatSerialize(facet.serialize(facet.data));
+            let blob = new Blob([data], {type: "application/text;charset=utf-8"});
+            saveAs(blob, ns.getFacetCacheName(facet.id));
+          }
+
           ns.facetDictionary[facet.id] = facet;
           return facet;
         } else {
@@ -361,11 +366,24 @@ angular.module('thisApp.services', [])
       }
 
       if (typeof id === 'string') {
-        let safeId = encodeURIComponent(id);
+        let safeId = ns.getFacetCacheName(id);
         return `${ns.cacheLocation}${safeId}`;
       } else {
         console.log(`Cannot retrieve cache URL from id ${id}`, facet);
       }
+    }
+
+    ns.getFacetCacheName = function (id) {
+      return encodeURIComponent(id);
+    }
+
+    window._FacetFactory_downloadCacheables = function () {
+      ns.getFacetList().forEach(facet => {
+        if (facet.isReady() && !facet.isCached() && !facet.isUncacheable()) {
+          console.log(`Download cacheable facet ${facet.id}`)
+          facet.download()
+        }
+      });
     }
 
     return ns;
