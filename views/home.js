@@ -11,7 +11,15 @@ angular.module('thisApp.home', ['ngRoute'])
 
 .controller('HomeController', function($scope, $location, FacetFactory) {
   let all = FacetFactory.newFacet('tweets.csv', {cached:true, dataFormat:'csv'});
-  all.obtainData(function(d){
-    console.log('Data:', d);
+  
+  let tweetCount = FacetFactory.newFacet('tweetCount', {
+    dependencies:['tweets.csv'],
+    compute: function(){
+      return FacetFactory.getFacet('tweets.csv').getData().length
+    }
+  })
+
+  tweetCount.retrieveData(function(d){
+    console.log('Retrieved data', d)
   })
 });

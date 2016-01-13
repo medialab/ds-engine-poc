@@ -132,7 +132,7 @@ angular.module('thisApp.services', [])
           facet.isCached = () => !!facet.cached;
           facet.getDependencies = () => facet.dependencies;
 
-          facet.obtainData = function (callback) {
+          facet.retrieveData = function (callback) {
             if (facet.isReady()) {
               facet.callData(callback);
             } else if (facet.isCached()) {
@@ -140,8 +140,19 @@ angular.module('thisApp.services', [])
             } else if (facet.areDependenciesReady()) {
               facet.computeData(callback);
             } else {
-              console.log(`Impossible to obtain facet because it is neither ready, ' +
-                'cached nor computable since dependencies are not ready. id: ${id}`, facet);
+              let unreadyDependency = facet.dependencies.some(id => {
+                let dependencyFacet = ns.getFacet(id);
+                if (dependencyFacet && dependencyFacet.isReady && dependencyFacet.isReady()) {
+                  // Dependency is OK
+                  return false;
+                } else {
+                  // Dependency needs to be retrieved
+                  dependencyFacet.retrieveData(() => {
+                    facet.retrieveData(callback);
+                  })
+                  return true;
+                }
+              })
             }
           }
 
