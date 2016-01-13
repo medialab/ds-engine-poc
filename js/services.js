@@ -12,6 +12,7 @@ angular.module('thisApp.services', [])
     ns.factory = FacetFactory;
 
     // Below we declare a series of facets we use in this project
+
     // The source of all data in there
     ns.tweets_csv = FacetFactory.newFacet('tweets.csv', {cached:true, dataFormat:'csv'});
 
@@ -21,8 +22,32 @@ angular.module('thisApp.services', [])
       compute: function(){
         let tweets_csvData = FacetFactory.getFacet('tweets.csv').getData();
         let data = [...tweets_csvData].map(item => {
+          // Time & Dates
           item.time = new Date(item.time * 1000);
           item.created_at = new Date(item.created_at);
+          item.from_user_created_at = new Date(item.from_user_created_at);
+          
+          // Numbers
+          item.retweet_count = parseInt(item.retweet_count, 10);
+          item.favorite_count = parseInt(item.favorite_count, 10);
+          item.from_user_tweetcount = parseInt(item.from_user_tweetcount, 10);
+          item.from_user_followercount = parseInt(item.from_user_followercount, 10);
+          item.from_user_friendcount = parseInt(item.from_user_friendcount, 10);
+          item.from_user_favourites_count = parseInt(item.from_user_favourites_count, 10);
+          item.from_user_listed = parseInt(item.from_user_listed, 10);
+
+          // Extract hashtags
+          item.hashtags = item.text.match(/[#]+[A-Za-z0-9-_]+/g) || [];
+
+          // Extract mentions
+          item.mentions = item.text.match(/[@]+[A-Za-z0-9-_]+/g) || [];
+
+          // Extract words
+          let text = item.text;
+          item.hashtags.forEach(d => text = text.replace(d, d.substr(1,d.length)) );
+          item.mentions.forEach(d => text = text.replace(d, d.substr(1,d.length)) );
+          item.words = text.split(/\W+/);
+
           return item;
         });
         console.log(data);
@@ -36,23 +61,60 @@ angular.module('thisApp.services', [])
       },
     });
     
+    // List of #hashtags
+    ns.hashtagList = FacetFactory.newFacet('hashtagList', {
+      dependencies: ['tweetList'],
+      compute: function () {
+        const tweetList = FacetFactory.getFacet('tweetList').getData();
+        // TODO: actually compute the list of hashtags
+      }
+    });
+
+    // Various simple facets
     ns.tweetCount = FacetFactory.newFacet('tweetCount', {
-      dependencies:['tweetList'],
+      dependencies: ['tweetList'],
       compute: function(){
         return FacetFactory.getFacet('tweetList').getData().length;
       },
-    })
+    });
 
     // Tweet serialization
     function serializeTweet(item) {
+      // Time & Dates
       item.time = item.time.toISOString();
       item.created_at = item.created_at.toISOString();
+      item.from_user_created_at = item.from_user_created_at.toISOString();
+
+      // Numbers: no need to serialize
+
+      // Rich contents
+      item.hashtags = JSON.stringify(item.hashtags);
+      item.mentions = JSON.stringify(item.mentions);
+      item.words = JSON.stringify(item.words);
+
       return item;
     }
 
     function unserializeTweet(item) {
+      // Time & Dates
       item.time = new Date(item.time);
       item.created_at = new Date(item.created_at);
+      item.from_user_created_at = new Date(item.from_user_created_at);
+
+      // Numbers
+      item.retweet_count = parseInt(item.retweet_count, 10);
+      item.favorite_count = parseInt(item.favorite_count, 10);
+      item.from_user_tweetcount = parseInt(item.from_user_tweetcount, 10);
+      item.from_user_followercount = parseInt(item.from_user_followercount, 10);
+      item.from_user_friendcount = parseInt(item.from_user_friendcount, 10);
+      item.from_user_favourites_count = parseInt(item.from_user_favourites_count, 10);
+      item.from_user_listed = parseInt(item.from_user_listed, 10);
+
+      // Rich contents
+      item.hashtags = JSON.parse(item.hashtags);
+      item.mentions = JSON.parse(item.mentions);
+      item.words = JSON.parse(item.words);
+
       return item;
     }
 
