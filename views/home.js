@@ -20,6 +20,7 @@ angular.module('thisApp.home', ['ngRoute'])
   })
 
   tweetCount.retrieveData(function(d){
-    console.log('Retrieved data', d)
+    $scope.tweetCount = d
+    $scope.$apply()
   })
 });
