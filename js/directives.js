@@ -162,7 +162,8 @@ angular.module('thisApp.directives', [])
 
             var brush = d3.svg.brush()
                 .x(x2)
-                .on("brush", brushed);
+                .on("brush", brushed)
+                .on("brushend", brushEnded);
 
             var area2 = d3.svg.area()
                 .interpolate("monotone")
@@ -226,6 +227,11 @@ angular.module('thisApp.directives', [])
               let extent = brush.extent();
               $scope.from = extent[0].getTime();
               $scope.to = extent[1].getTime();
+              $scope.$apply();
+            }
+
+            function brushEnded() {
+              $scope.$emit('brushEnded');
               $scope.$apply();
             }
           }

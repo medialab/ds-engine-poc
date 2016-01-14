@@ -11,10 +11,21 @@ angular.module('thisApp.hashtags-overtime', ['ngRoute'])
 
 .controller('HashtagsOvertimeController', function($scope, $location, Facets) {
   $scope.loading = true;
-
+  
   loadFacets(() => {
-    console.log('loaded');
+    // No callback here
   });
+
+  // time extent slow update
+  $scope.$on('brushEnded', function(event) {
+    $scope.startTime_slowUpdate = $scope.startTime;
+    $scope.endTime_slowUpdate = $scope.endTime;
+  });
+  $scope.$watchGroup(['startTime_slowUpdate', 'endTime_slowUpdate'], function(newValues, oldValues, scope) {
+    $scope.startTime = newValues[0];
+    $scope.endTime = newValues[1];
+  })
+
 
   function loadFacets(callback) {
     function finalize() {
