@@ -10,6 +10,20 @@ angular.module('thisApp.filters', [])
     }
   }])
 
+  .filter('dateCompact', [function() {
+    return function(timestamp) {
+      if ( timestamp ) {
+        let date = (new Date(timestamp));
+        let day = date.getDate();
+        let month = date.getMonth() + 1;
+        let year = date.getFullYear();
+        return `${day}-${month}-${year}`;
+      } else {
+        return '';
+      }
+    }
+  }])
+
   .filter('prettyDate', [function() {
     return function(timestamp) {
       return prettyDate(timestamp);

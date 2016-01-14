@@ -4,7 +4,7 @@
     <p class="text-muted">Displaying only hashtags with {{minCount}}+ tweets over the period - {{list.length}} hashtags</p>
   </div>
   <div class="row">
-  <div class="col-md-6">
+  <div class="col-md-4">
     <table>
       <tr>
         <td class="text-muted hashtag-line-number">
@@ -16,10 +16,17 @@
       </tr>
     </table>
   </div>
-  <div class="col-md-6">
+  <div class="col-md-4 text-muted center">
+    <strong>Date</strong> first / median / last
+  </div>
+  <div class="col-md-2 text-muted center">
+    <strong>Favorite</strong> mean / max
+  </div>
+  <div class="col-md-2 text-muted center">
+    <strong>RT</strong> mean / max
   </div>
 </div>
-  <div dir-paginate="item in list | orderBy:'-tweetCount' | itemsPerPage: 10">
+  <div dir-paginate="item in list | orderBy:'-tweetCount' | itemsPerPage: 25">
     <hashtag-line item="item"/>
   </div>
   <dir-pagination-controls
