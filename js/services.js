@@ -26,10 +26,9 @@ angular.module('thisApp.services', [])
         let tweets_csvData = FacetFactory.getFacet('tweets.csv').getData();
         let data = [...tweets_csvData].map(item => {
           let result = {};
-          // Time & Dates
-          result.time = new Date(item.time * 1000);
-          // result.created_at = new Date(item.created_at);
-          result.from_user_created_at = new Date(item.from_user_created_at);
+          // Time: we use the # of millisecond, javascript style
+          result.time = (new Date(item.time * 1000)).getTime();
+          result.from_user_created_at = (new Date(item.from_user_created_at)).getTime();
           
           // Numbers
           result.retweet_count = parseInt(item.retweet_count, 10);
@@ -73,92 +72,18 @@ angular.module('thisApp.services', [])
         return data.map(unserializeTweet);
       },
     });
-    
-    // List of #hashtags
-    ns.hashtagList = FacetFactory.newFacet('hashtagList', {
-      dependencies: ['tweetList'],
-      compute: function () {
-        const tweetList = FacetFactory.getFacet('tweetList').getData();
-        let hashtagsIndex = {};
-
-        tweetList.forEach(item => {
-          // Extract hashtags
-          let hashtags = item.text.match(/[#]+[A-Za-z0-9-_]+/g) || [];
-          hashtags.forEach(ht => {
-            let htData = hashtagsIndex[ht] || {tweetIdList:[], temp:{dates:[], rtCounts:[], favCounts:[]}};
-            htData.tweetIdList.push(item.id);
-            // We get time as a number because of statistical operations (see below)
-            htData.temp.dates.push(item.time.getTime());
-            htData.temp.rtCounts.push(item.retweet_count);
-            htData.temp.favCounts.push(item.favorite_count);
-            hashtagsIndex[ht] = htData;
-          });
-        });
-
-        // Compute metadata
-        for (let ht in hashtagsIndex) {
-          let htData = hashtagsIndex[ht];
-          // Dates
-          htData.temp.dates.sort();
-          htData.dateFirst = htData.temp.dates[0];
-          htData.dateLast = htData.temp.dates[htData.temp.dates.length-1];
-          htData.dateMean = Math.round(d3.mean(htData.temp.dates));
-          htData.dateMedian = Math.round(d3.median(htData.temp.dates));
-          htData.dateDeviation = Math.round(d3.deviation(htData.temp.dates));
-          // retweet_count
-          htData.retweet_countMin = d3.min(htData.temp.rtCounts);
-          htData.retweet_countMax = d3.max(htData.temp.rtCounts);
-          htData.retweet_countMean = d3.mean(htData.temp.rtCounts);
-          htData.retweet_countMedian = d3.median(htData.temp.rtCounts);
-          htData.retweet_countDeviation = d3.deviation(htData.temp.rtCounts);
-          // favorite_count
-          htData.favorite_countMin = d3.min(htData.temp.favCounts);
-          htData.favorite_countMax = d3.max(htData.temp.favCounts);
-          htData.favorite_countMean = d3.mean(htData.temp.favCounts);
-          htData.favorite_countMedian = d3.median(htData.temp.favCounts);
-          htData.favorite_countDeviation = d3.deviation(htData.temp.favCounts);
-          delete htData.temp;
-          hashtagsIndex[ht] = htData;
-        }
-
-        let hashtagList = [];
-        for (let ht in hashtagsIndex) {
-          let htData = hashtagsIndex[ht];
-          htData.text = ht;
-          hashtagList.push(htData);
-        }
-
-        return hashtagList;
-      }
-    });
-
-    // Various simple facets
-    ns.tweetCount = FacetFactory.newFacet('tweetCount', {
-      dependencies: ['tweetList'],
-      uncacheable: true,
-      compute: function(){
-        return FacetFactory.getFacet('tweetList').getData().length;
-      },
-    });
 
     // Tweet serialization
     function serializeTweet(item) {
-      // Time & Dates
-      item.time = item.time.toISOString();
-      // item.created_at = item.created_at.toISOString();
-      item.from_user_created_at = item.from_user_created_at.toISOString();
-
-      // Numbers: no need to serialize
-
+      // In current state of data processing, we do nothing
       return item;
     }
 
     function unserializeTweet(item) {
-      // Time & Dates
-      item.time = new Date(item.time);
-      // item.created_at = new Date(item.created_at);
-      item.from_user_created_at = new Date(item.from_user_created_at);
-
+      // Time
+      item.time = parseInt(item.time, 10);
+      item.from_user_created_at = parseInt(item.from_user_created_at, 10);
+      
       // Numbers
       item.retweet_count = parseInt(item.retweet_count, 10);
       item.favorite_count = parseInt(item.favorite_count, 10);
@@ -170,6 +95,99 @@ angular.module('thisApp.services', [])
 
       return item;
     }
+    
+    // List of #hashtags
+    ns.hashtagList = FacetFactory.newFacet('hashtagList', {
+      dependencies: ['tweetList'],
+      compute: function () {
+        const tweetList = FacetFactory.getFacet('tweetList').getData();
+        return ns.extractHashtagsFromTweetList(tweetList, {all:true});
+      }
+    });
+
+    // Get a list of #hashtags with a time span
+    ns.getHashtagListForPeriod = function (from, to) {
+      return FacetFactory.newFacet(`hashtagList-from-${from}-to-${to}`, {
+        dependencies: ['tweetList'],
+        compute: function () {
+          const tweetList = FacetFactory.getFacet('tweetList').getData();
+          return ns.extractHashtagsFromTweetList(tweetList, {all:false, from:from, to:to});
+        }
+      });
+    }
+
+    ns.extractHashtagsFromTweetList = function (tweetList_, opts) {
+      let tweetList;
+      if (opts.all) {
+        tweetList = tweetList_;
+      } else {
+        tweetList = tweetList_.filter(item => {
+          return item.time >= opts.from && item.time <= opts.to;
+        })
+      }
+
+      let hashtagsIndex = {};
+      tweetList.forEach(item => {
+        // Extract hashtags
+        let hashtags = item.text.match(/[#]+[A-Za-z0-9-_]+/g) || [];
+        hashtags.forEach(ht => {
+          let htData = hashtagsIndex[ht] || {tweetIdList:[], temp:{dates:[], rtCounts:[], favCounts:[]}};
+          htData.tweetIdList.push(item.id);
+          // We get time as a number because of statistical operations (see below)
+          htData.temp.dates.push(item.time);
+          htData.temp.rtCounts.push(item.retweet_count);
+          htData.temp.favCounts.push(item.favorite_count);
+          hashtagsIndex[ht] = htData;
+        });
+      });
+
+      // Compute metadata
+      for (let ht in hashtagsIndex) {
+        let htData = hashtagsIndex[ht];
+        // Dates
+        htData.temp.dates.sort();
+        htData.dateFirst = htData.temp.dates[0];
+        htData.dateLast = htData.temp.dates[htData.temp.dates.length-1];
+        htData.dateMean = Math.round(d3.mean(htData.temp.dates));
+        htData.dateMedian = Math.round(d3.median(htData.temp.dates));
+        htData.dateDeviation = Math.round(d3.deviation(htData.temp.dates));
+        // retweet_count
+        htData.retweet_countMin = d3.min(htData.temp.rtCounts);
+        htData.retweet_countMax = d3.max(htData.temp.rtCounts);
+        htData.retweet_countMean = d3.mean(htData.temp.rtCounts);
+        htData.retweet_countMedian = d3.median(htData.temp.rtCounts);
+        htData.retweet_countDeviation = d3.deviation(htData.temp.rtCounts);
+        // favorite_count
+        htData.favorite_countMin = d3.min(htData.temp.favCounts);
+        htData.favorite_countMax = d3.max(htData.temp.favCounts);
+        htData.favorite_countMean = d3.mean(htData.temp.favCounts);
+        htData.favorite_countMedian = d3.median(htData.temp.favCounts);
+        htData.favorite_countDeviation = d3.deviation(htData.temp.favCounts);
+        // Misc
+        htData.tweetCount = htData.tweetIdList.length;
+        delete htData.temp;
+        hashtagsIndex[ht] = htData;
+      }
+
+      let hashtagList = [];
+      for (let ht in hashtagsIndex) {
+        let htData = hashtagsIndex[ht];
+        htData.text = ht;
+        hashtagList.push(htData);
+      }
+
+      return hashtagList;
+
+    }
+
+    // Various simple facets
+    ns.tweetCount = FacetFactory.newFacet('tweetCount', {
+      dependencies: ['tweetList'],
+      uncacheable: true,
+      compute: function(){
+        return FacetFactory.getFacet('tweetList').getData().length;
+      },
+    });
 
     return ns;
   })
