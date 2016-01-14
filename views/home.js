@@ -10,15 +10,11 @@ angular.module('thisApp.home', ['ngRoute'])
 }])
 
 .controller('HomeController', function($scope, $location, Facets) {
-  let htTimeFacet = Facets.getHashtagListForPeriod(1435733150000, 1435736100000);
+  // let htTimeFacet = Facets.getHashtagListForPeriod(1435733150000, 1435736100000);
 
-  htTimeFacet.retrieveData(function(d){
-    console.log('hashtagList', d.filter((x, i) => {return i < 10;}) );
-    console.log('tweetList', Facets.tweetList.getData().filter((x, i) => {return i < 10;}) );
-  })
-
-  $scope.clear = function () {
-    Facets.tweetList.clear();
-  }
+  // htTimeFacet.retrieveData(function(d){
+  //   console.log('hashtagList', d.filter((x, i) => {return i < 10;}) );
+  //   console.log('tweetList', Facets.tweetList.getData().filter((x, i) => {return i < 10;}) );
+  // })
   
 });

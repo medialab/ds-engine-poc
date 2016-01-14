@@ -23,7 +23,20 @@ angular.module('thisApp.directives', [])
     }
   }])
 
-  .directive('spinner', [function(){
+  .directive('dailyCount', [function (){
+    return {
+      restrict: 'E',
+      templateUrl: 'partials/dailyCount.html',
+      scope: {
+        data: '='
+      },
+      link: function($scope, el, attrs) {
+        
+      },
+    }
+  }])
+
+  .directive('spinner', [function (){
     return {
       restrict: 'E'
     , templateUrl: 'partials/spinner.html'

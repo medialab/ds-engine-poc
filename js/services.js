@@ -116,6 +116,7 @@ angular.module('thisApp.services', [])
       });
     }
 
+    // A processing function factored for hashtag related facets
     ns.extractHashtagsFromTweetList = function (tweetList_, opts) {
       let tweetList;
       if (opts.all) {
@@ -179,6 +180,36 @@ angular.module('thisApp.services', [])
       return hashtagList;
 
     }
+
+    // Total tweet count over time
+    ns.tweetsTotalDaily = FacetFactory.newFacet('tweetsTotalDaily', {
+      cached: false,
+      dependencies: ['tweetList'],
+      compute: function(){
+        let tweetList = FacetFactory.getFacet('tweetList').getData();
+        let dateIndex = {};
+
+        tweetList.some(item => {
+          let dateAsTime = getJustTheDate(item.time).getTime();
+          let dateData = dateIndex[dateAsTime] || {count:0, dateString:(new Date(dateAsTime)).toDateString()};
+          dateData.count++;
+          dateIndex[dateAsTime] = dateData;
+        });
+
+        let list = [];
+        for (let dateAsTime in dateIndex) {
+          let dateData = dateIndex[dateAsTime];
+          dateData.time = dateAsTime;
+          list.push(dateData);
+        }
+        return list;
+
+        function getJustTheDate(time) {
+          return new Date((new Date(time)).toDateString());
+        }
+        
+      },
+    });
 
     // Various simple facets
     ns.tweetCount = FacetFactory.newFacet('tweetCount', {
