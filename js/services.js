@@ -85,16 +85,35 @@ angular.module('thisApp.services', [])
           // Extract hashtags
           let hashtags = item.text.match(/[#]+[A-Za-z0-9-_]+/g) || [];
           hashtags.forEach(ht => {
-            let htData = hashtagsIndex[ht] || {tweetIdList:[]};
+            let htData = hashtagsIndex[ht] || {tweetIdList:[], temp:{dates:[], rtCounts:[], favCounts:[]}};
             htData.tweetIdList.push(item.id);
+            // We get time as a number because of sorting (see below)
+            htData.temp.dates.push(item.time.getTime());
+            htData.temp.rtCounts.push(item.retweet_count);
+            htData.temp.favCounts.push(item.favorite_count);
             hashtagsIndex[ht] = htData;
           });
         });
 
+        // Compute metadata
+        for (let ht in hashtagsIndex) {
+          let htData = hashtagsIndex[ht];
+          htData.temp.dates.sort();
+          htData.dateFirst = htData.temp.dates[0];
+          htData.dateLast = htData.temp.dates[htData.temp.dates.length-1];
+          htData.dateMean = Math.round(d3.mean(htData.temp.dates));
+          htData.dateMedian = Math.round(d3.median(htData.temp.dates));
+          htData.dateDeviation = Math.round(d3.deviation(htData.temp.dates));
+          htData.dates = htData.temp.dates;
+          delete htData.temp;
+          hashtagsIndex[ht] = htData;
+        }
+
         let hashtagList = [];
         for (let ht in hashtagsIndex) {
           let htData = hashtagsIndex[ht];
-          hashtagList.push({text:ht, tweetIdList:htData.tweetIdList});
+          htData.text = ht;
+          hashtagList.push(htData);
         }
 
         return hashtagList;
@@ -303,7 +322,7 @@ angular.module('thisApp.services', [])
                   return false;
                 } else {
                   // Dependency needs to be retrieved
-                  console.log(`retrieve data: COMPUTE DEPENDENCY ${dependencyFacet.id} of ${facet.id}`);
+                  console.log(`retrieve data: RETRIEVE DEPENDENCY ${dependencyFacet.id} of ${facet.id}`);
                   dependencyFacet.retrieveData(() => {
                     facet.retrieveData(callback);
                   })
