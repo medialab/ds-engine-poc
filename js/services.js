@@ -183,7 +183,7 @@ angular.module('thisApp.services', [])
 
     // Total tweet count over time
     ns.tweetsTotalDaily = FacetFactory.newFacet('tweetsTotalDaily', {
-      cached: false,
+      cached: true,
       dependencies: ['tweetList'],
       compute: function(){
         let tweetList = FacetFactory.getFacet('tweetList').getData();
@@ -208,6 +208,17 @@ angular.module('thisApp.services', [])
           return new Date((new Date(time)).toDateString());
         }
         
+      },
+      serialize: data => {
+        return data;
+      },
+      unserialize: data => {
+        return data.map(d => {
+          // Numbers
+          d.count = parseInt(d.count, 10);
+          d.time = parseInt(d.time, 10);
+          return d;
+        });
       },
     });
 

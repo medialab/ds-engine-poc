@@ -98,7 +98,28 @@ h1, h2, h3, h4, h5, h6 {
 
 
 /* ==========================================================================
-   Home view specific styles
+   D3 visualizations specific styles
    ========================================================================== */
 
+.brush-curve svg {
+  font: 10px sans-serif;
+}
+
+.brush-curve .area {
+  fill: steelblue;
+  clip-path: url(#clip);
+}
+
+.brush-curve .axis path,
+.brush-curve .axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.brush-curve .brush .extent {
+  stroke: #fff;
+  fill-opacity: .125;
+  shape-rendering: crispEdges;
+}
 

@@ -15,8 +15,6 @@ angular.module('thisApp.hashtags-overtime', ['ngRoute'])
     console.log('loaded');
   });
 
-  
-
   function loadFacets(callback) {
     function finalize() {
       setTimeout(() => {
@@ -26,10 +24,10 @@ angular.module('thisApp.hashtags-overtime', ['ngRoute'])
       }, 0);
     }
 
-    Facets.tweetsTotalDaily.retrieveData(tweetsTotalDaily => {
-      $scope.tweetsTotalDaily = tweetsTotalDaily;
+    Facets.tweetsTotalDaily.retrieveData(ttdData => {
+      $scope.tweetsTotalDaily = ttdData;
       finalize();
-    })
+    });
     // let htTimeFacet = Facets.getHashtagListForPeriod(1435733150000, 1435736100000);
     // htTimeFacet.retrieveData(function(d){
     //   console.log('hashtagList', d.filter((x, i) => {return i < 10;}) );
