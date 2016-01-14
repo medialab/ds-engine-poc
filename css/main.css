@@ -28,21 +28,48 @@ h1, h2, h3, h4, h5, h6 {
   border-bottom: none;
 }
 
-/* Filter header */
-.filter-header {
-  margin-top: 94px;
+/* Viz card */
+.viz-card-spacer{
+  height: 48px;
 }
-.filter-block {
-  display: inline-block;
-  margin-right: 10px;
+.viz-card{
+  padding: 24px 36px 36px 36px;
+
+  border: 1px solid #EEE;
+  -webkit-border-radius: 2px;
+          border-radius: 2px;
+  -webkit-box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+          box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+
+  background-color: #FFF;
+  color: #666;
 }
-.filter-block .btn {
-  margin-top: -8px;
+.viz-card p, .viz-card ul, .viz-card ol {
+  font-family: 'Hind';
+  font-size: 18px;
 }
-.filter-header-text {
-  font-family: "Hind";
+.viz-card blockquote p {
+  display: inline;
   font-size: 24px;
-  color: #999;
+  color: #666;
+}
+.viz-card .viz-description h1{
+  font-size:36px
+}
+.viz-card .viz-description h2{
+  font-size:32px
+}
+.viz-card .viz-description h3{
+  font-size:28px
+}
+.viz-card .viz-description h4{
+  font-size:24px
+}
+.viz-card .viz-description h5{
+  font-size:22px
+}
+.viz-card .viz-description h6{
+  font-size:20px
 }
 
 
@@ -96,44 +123,4 @@ h1, h2, h3, h4, h5, h6 {
   overflow: hidden;
 }
 
-
-/* ==========================================================================
-   D3 visualizations specific styles
-   ========================================================================== */
-
-/*
-.brush-curve .axis path,
-.brush-curve .axis line {
-  fill: none;
-  stroke: #000;
-  shape-rendering: crispEdges;
-}
-
-.brush-curve .brush .extent {
-  stroke: #fff;
-  fill-opacity: .125;
-  shape-rendering: crispEdges;
-}
-
-.simple-curve svg {
-  font: 10px sans-serif;
-}
-
-.simple-curve .area {
-  fill: steelblue;
-  clip-path: url(#clip-curve);
-}
-
-.simple-curve .axis path,
-.simple-curve .axis line {
-  fill: none;
-  stroke: #000;
-  shape-rendering: crispEdges;
-}
-
-.brush-curve .brush .extent {
-  stroke: #fff;
-  fill-opacity: .125;
-  shape-rendering: crispEdges;
-}*/
 

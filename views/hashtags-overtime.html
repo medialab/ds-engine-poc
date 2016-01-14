@@ -10,9 +10,7 @@
 
     <div class="col-md-8 col-sm-6">
       <div class="page-header">
-
         <h1>Hashtags over time</h1>
-        <p>From {{startTime|date}} to {{endTime|date}}</p>
       </div>
     </div>
 
@@ -20,22 +18,25 @@
 
   <div class="row">
     <div class="col-md-12">
-      <daily-count id="daily-count-tweetsTotalDaily" data="tweetsTotalDaily" time-accessor="ttdGetTime" volume-accessor="ttdGetVolume" from="startTime" to="endTime"/>
+      <div class="viz-card">
+        <h3>Select a time interval:</h3>
+        <div>
+          <daily-count-brushable
+            id="BRUSH"
+            data="tweetsTotalDaily"
+            time-accessor="ttdGetTime"
+            volume-accessor="ttdGetVolume"
+            from="startTime"
+            to="endTime"
+          />
+        </div>
+        <center>
+          <strong>Tweet volume over time</strong>
+          <span ng-show="startTime"> - Selection: from {{startTime|date}} to {{endTime|date}}</span>
+        </center>
+      </div>
     </div>
   </div>
-
-  <div class="row">
-    <div class="col-md-12">
-      <daily-count-brushable id="daily-count-brushable-tweetsTotalDaily" data="tweetsTotalDaily" time-accessor="ttdGetTime" volume-accessor="ttdGetVolume" from="startTime" to="endTime"/>
-    </div>
-  </div>
-
-  <div class="row">
-    <div class="col-md-12">
-      <daily-count-brushable id="daily-count-brushable-tweetsTotalDaily2" data="tweetsTotalDaily" time-accessor="ttdGetTime" volume-accessor="ttdGetVolume" from="startTime_slowUpdate" to="endTime_slowUpdate"/>
-    </div>
-  </div>
-
 
   <footer>
     
