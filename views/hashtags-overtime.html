@@ -12,6 +12,7 @@
       <div class="page-header">
 
         <h1>Hashtags over time</h1>
+        <p>From {{startTime|date}} to {{endTime|date}}</p>
         
       </div>
     </div>
@@ -20,7 +21,7 @@
 
   <div class="row">
     <div class="col-md-12">
-      <daily-count data="tweetsTotalDaily" time-accessor="ttdGetTime" volume-accessor="ttdGetVolume"/>
+      <daily-count-brushable data="tweetsTotalDaily" time-accessor="ttdGetTime" volume-accessor="ttdGetVolume" from="startTime" to="endTime"/>
     </div>
   </div>
 

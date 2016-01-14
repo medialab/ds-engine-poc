@@ -8,6 +8,7 @@ angular.module('thisApp', [
   'yaru22.directives.md',
   'thisApp.services',
   'thisApp.directives',
+  'thisApp.filters',
   'thisApp.home',
   'thisApp.hashtags-overtime',
 ]).
