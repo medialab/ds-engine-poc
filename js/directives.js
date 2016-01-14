@@ -2,7 +2,7 @@
 
 /* Services */
 
-angular.module('thisApp.directives', [])
+angular.module('thisApp.directives', ['angularUtils.directives.dirPagination'])
   
   .directive('navbar', [function(){
     return {
@@ -240,6 +240,16 @@ angular.module('thisApp.directives', [])
     }
   }])
 
+  .directive('hashtagLine', [function (){
+    return {
+      restrict: 'E',
+      scope: {
+        item: '=',
+      },
+      templateUrl: 'partials/hashtagLine.html',
+    }
+  }])
+
   .directive('hashtagsByPeriod', ['Facets', '$timeout', function (Facets, $timeout){
     return {
       restrict: 'E',
@@ -273,8 +283,6 @@ angular.module('thisApp.directives', [])
                 $scope.loading = false;
                 $scope.list = data.filter(d => {
                   return d.tweetCount >= $scope.minCount;
-                }).sort(function (a, b){
-                  return b.tweetCount - a.tweetCount;
                 });
                 $scope.$apply();
               });

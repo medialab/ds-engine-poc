@@ -1,5 +1,30 @@
 <div ng-if="loading">LOADING...</div>
 <div ng-if="!loading">
-  <p class="text-muted">Displaying only hashtags with {{minCount}}+ tweets over the period</p>
-  {{list.length}} hashtags
+  <div>
+    <p class="text-muted">Displaying only hashtags with {{minCount}}+ tweets over the period - {{list.length}} hashtags</p>
+  </div>
+  <div class="row">
+  <div class="col-md-6">
+    <table>
+      <tr>
+        <td class="text-muted hashtag-line-number">
+          tweets
+        </td>
+        <td class="text-muted">
+          hashtag
+        </td>
+      </tr>
+    </table>
+  </div>
+  <div class="col-md-6">
+  </div>
+</div>
+  <div dir-paginate="item in list | orderBy:'-tweetCount' | itemsPerPage: 10">
+    <hashtag-line item="item"/>
+  </div>
+  <dir-pagination-controls
+    boundary-links="true"
+    on-page-change="pageChangeHandler(newPageNumber)"
+    template-url="partials/dirPagination.tpl.html"
+  ></dir-pagination-controls>
 </div>
