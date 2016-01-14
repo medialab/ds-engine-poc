@@ -35,6 +35,19 @@
           <span ng-show="startTime"> - Selection: from {{startTime|date}} to {{endTime|date}}</span>
         </center>
       </div>
+
+      <div class="viz-card-spacer"></div>
+
+      <div class="viz-card">
+        <h3>Hashtags over this period</h3>
+        <hashtags-by-period
+          from="startTime_slowUpdate"
+          to="endTime_slowUpdate"
+          default-from="timeMin"
+          default-to="timeMax"
+          min-count="5"
+        />
+      </div>
     </div>
   </div>
 

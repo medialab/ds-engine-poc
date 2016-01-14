@@ -240,6 +240,52 @@ angular.module('thisApp.directives', [])
     }
   }])
 
+  .directive('hashtagsByPeriod', ['Facets', '$timeout', function (Facets, $timeout){
+    return {
+      restrict: 'E',
+      scope: {
+        from: '=',
+        to: '=',
+        defaultFrom: '=',
+        defaultTo: '=',
+        minCount: '=',
+      },
+      templateUrl: 'partials/hashtagsByPeriod.html',
+      link: function($scope, el, attrs) {
+        $scope.loading = true;
+        $scope.$watchGroup(['from', 'to', 'defaultFrom', 'defaultTo'], function (newValues, oldValues, $scope) {
+          let from = newValues[0];
+          let to = newValues[1];
+          let defaultFrom = newValues[2];
+          let defaultTo = newValues[3];
+          if (from && to) {
+            displayFacet(from, to);
+          } else if (defaultFrom && defaultTo) {
+            displayFacet(defaultFrom, defaultTo);
+          }
+        })
+
+        function displayFacet(from, to) {
+          if (from && to){
+            $scope.loading = true;
+            $timeout(() => {
+              Facets.getHashtagListForPeriod(from, to).retrieveData(data => {
+                $scope.loading = false;
+                $scope.list = data.filter(d => {
+                  return d.tweetCount >= $scope.minCount;
+                }).sort(function (a, b){
+                  return b.tweetCount - a.tweetCount;
+                });
+                $scope.$apply();
+              });
+              $scope.$apply();
+            }, 0, false);
+          }
+        }
+      },
+    }
+  }])
+
   .directive('spinner', [function (){
     return {
       restrict: 'E'
