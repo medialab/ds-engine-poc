@@ -382,7 +382,7 @@ angular.module('thisApp.services', [])
               facet.callData(callback);
             } else if (facet.isCached()) {
               console.log(`retrieve data: LOAD ${facet.id}`);
-              facet.loadData(callback);
+              facet.loadData(callback, {computeAtFail: true});
             } else if (facet.areDependenciesReady()) {
               console.log(`retrieve data: COMPUTE ${facet.id}`);
               facet.computeData(callback);
@@ -436,7 +436,7 @@ angular.module('thisApp.services', [])
             }
           }
 
-          facet.loadData = function (callback) {
+          facet.loadData = function (callback, opts) {
             if (facet.isCached()) {
               let url = ns.getFacetCacheURL(facet.id);
               $.get(url, function(d){
@@ -444,7 +444,11 @@ angular.module('thisApp.services', [])
                 facet.ready = true;
                 callback(facet.data);
               }).fail(function() {
-                  console.log(`Facet loading failed for unknown reasons.\nid:${id}\nurl:${url}`, facet);
+                  console.log(`Facet loading failed for unknown reasons.\nid:${id}\nurl:${url}\n`, facet);
+                  if (opts && opts.computeAtFail) {
+                    console.log('-> Now trying to compute.');
+                    facet.computeData(callback, {withDependencies: true});
+                  }
                 })
             } else {
               console.log(`Unloadable facet: ${id}`, facet);
@@ -465,11 +469,26 @@ angular.module('thisApp.services', [])
             return ready;
           }
 
-          facet.computeData = function (callback) {
+          facet.computeData = function (callback, opts) {
             if (facet.areDependenciesReady()) {
               facet.data = facet._compute();
               facet.ready = true;
               callback(facet.data);
+            } else if (opts && opts.withDependencies) {
+              let unreadyDependency = facet.dependencies.some(id => {
+                let dependencyFacet = ns.getFacet(id);
+                if (dependencyFacet && dependencyFacet.isReady && dependencyFacet.isReady()) {
+                  // Dependency is OK
+                  return false;
+                } else {
+                  // Dependency needs to be retrieved
+                  console.log(`retrieve data: RETRIEVE DEPENDENCY ${dependencyFacet.id} of ${facet.id}`);
+                  dependencyFacet.retrieveData(() => {
+                    facet.retrieveData(callback);
+                  })
+                  return true;
+                }
+              })
             } else {
               console.log(`Facet not computed because dependencies are not ready. id: ${id}`, facet);
             }

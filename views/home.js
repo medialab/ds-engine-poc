@@ -10,9 +10,6 @@ angular.module('thisApp.home', ['ngRoute'])
 }])
 
 .controller('HomeController', function($scope, $location, Facets) {
-  Facets.tweetList.retrieveData(function(d){
-    console.log(d)
-  });
   // let htTimeFacet = Facets.getHashtagListForPeriod(1435733150000, 1435736100000);
 
   // htTimeFacet.retrieveData(function(d){
