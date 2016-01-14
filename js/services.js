@@ -87,7 +87,7 @@ angular.module('thisApp.services', [])
           hashtags.forEach(ht => {
             let htData = hashtagsIndex[ht] || {tweetIdList:[], temp:{dates:[], rtCounts:[], favCounts:[]}};
             htData.tweetIdList.push(item.id);
-            // We get time as a number because of sorting (see below)
+            // We get time as a number because of statistical operations (see below)
             htData.temp.dates.push(item.time.getTime());
             htData.temp.rtCounts.push(item.retweet_count);
             htData.temp.favCounts.push(item.favorite_count);
@@ -98,13 +98,25 @@ angular.module('thisApp.services', [])
         // Compute metadata
         for (let ht in hashtagsIndex) {
           let htData = hashtagsIndex[ht];
+          // Dates
           htData.temp.dates.sort();
           htData.dateFirst = htData.temp.dates[0];
           htData.dateLast = htData.temp.dates[htData.temp.dates.length-1];
           htData.dateMean = Math.round(d3.mean(htData.temp.dates));
           htData.dateMedian = Math.round(d3.median(htData.temp.dates));
           htData.dateDeviation = Math.round(d3.deviation(htData.temp.dates));
-          htData.dates = htData.temp.dates;
+          // retweet_count
+          htData.retweet_countMin = d3.min(htData.temp.rtCounts);
+          htData.retweet_countMax = d3.max(htData.temp.rtCounts);
+          htData.retweet_countMean = d3.mean(htData.temp.rtCounts);
+          htData.retweet_countMedian = d3.median(htData.temp.rtCounts);
+          htData.retweet_countDeviation = d3.deviation(htData.temp.rtCounts);
+          // favorite_count
+          htData.favorite_countMin = d3.min(htData.temp.favCounts);
+          htData.favorite_countMax = d3.max(htData.temp.favCounts);
+          htData.favorite_countMean = d3.mean(htData.temp.favCounts);
+          htData.favorite_countMedian = d3.median(htData.temp.favCounts);
+          htData.favorite_countDeviation = d3.deviation(htData.temp.favCounts);
           delete htData.temp;
           hashtagsIndex[ht] = htData;
         }
