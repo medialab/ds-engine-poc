@@ -258,7 +258,7 @@ angular.module('thisApp.directives', [])
           let to = newValues[1];
           let defaultFrom = newValues[2];
           let defaultTo = newValues[3];
-          if (from && to) {
+          if (from && to && from != to) {
             displayFacet(from, to);
           } else if (defaultFrom && defaultTo) {
             displayFacet(defaultFrom, defaultTo);

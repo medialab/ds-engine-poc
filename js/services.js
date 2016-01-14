@@ -109,6 +109,7 @@ angular.module('thisApp.services', [])
     ns.getHashtagListForPeriod = function (from, to) {
       return FacetFactory.newFacet(`hashtagList-from-${from}-to-${to}`, {
         dependencies: ['tweetList'],
+        ephemeral: true,
         compute: function () {
           const tweetList = FacetFactory.getFacet('tweetList').getData();
           return ns.extractHashtagsFromTweetList(tweetList, {all:false, from:from, to:to});
@@ -314,6 +315,7 @@ angular.module('thisApp.services', [])
           facet.ready = false;
           facet.cached = false;
           facet.uncacheable = false;
+          facet.ephemeral = false;
           facet.dependencies = [];
           facet._compute = opts.compute;
           facet.dataFormat = 'json';
@@ -321,6 +323,7 @@ angular.module('thisApp.services', [])
           // Check and apply options
           if (opts.cached) { facet.cached = true; }
           if (opts.uncacheable) { facet.uncacheable = true; }
+          if (opts.ephemeral) { facet.ephemeral = true; }
 
           if (opts.dependencies) {
             if (Array.isArray(opts.dependencies)) {
@@ -377,6 +380,7 @@ angular.module('thisApp.services', [])
           facet.getDependencies = () => facet.dependencies;
 
           facet.retrieveData = function (callback) {
+            ns.clearEphemeralFacets();
             if (facet.isReady()) {
               console.log(`retrieve data: CALL ${facet.id}`);
               facet.callData(callback);
@@ -405,6 +409,7 @@ angular.module('thisApp.services', [])
           }
 
           facet.getData = function () {
+            ns.clearEphemeralFacets();
             if (facet.isReady()) {
               return facet.data;
             } else {
@@ -419,6 +424,7 @@ angular.module('thisApp.services', [])
           }
 
           facet.clearDependencies = function () {
+            ns.clearEphemeralFacets();
             console.log(`Clear data dependencies of ${facet.id}`);
             facet.dependencies.forEach(id => {
               let dependencyFacet = ns.getFacet(id);
@@ -429,6 +435,7 @@ angular.module('thisApp.services', [])
 
           // Like getData but in an asynchronous fashion
           facet.callData = function (callback) {
+            ns.clearEphemeralFacets();
             if (facet.isReady()) {
               callback(facet.data);
             } else {
@@ -437,6 +444,7 @@ angular.module('thisApp.services', [])
           }
 
           facet.loadData = function (callback, opts) {
+            ns.clearEphemeralFacets();
             if (facet.isCached()) {
               let url = ns.getFacetCacheURL(facet.id);
               $.get(url, function(d){
@@ -470,6 +478,7 @@ angular.module('thisApp.services', [])
           }
 
           facet.computeData = function (callback, opts) {
+            ns.clearEphemeralFacets();
             if (facet.areDependenciesReady()) {
               facet.data = facet._compute();
               facet.ready = true;
@@ -533,6 +542,16 @@ angular.module('thisApp.services', [])
 
     ns.getFacetCacheName = function (id) {
       return encodeURIComponent(id);
+    }
+
+    ns.clearEphemeralFacets = function () {
+      ns.getFacetList().forEach(facet => {
+        if (facet.ephemeral) {
+          // delete
+          facet.clear();
+          ns.deleteFacet(facet.id);
+        }
+      });
     }
 
     window._FacetFactory_downloadCacheables = function () {
