@@ -302,6 +302,21 @@ angular.module('thisApp.services', [])
             }
           }
 
+          facet.clear = function () {
+            console.log(`Clear data of ${facet.id}`);
+            facet.ready = false;
+            facet.data = undefined;
+          }
+
+          facet.clearDependencies = function () {
+            console.log(`Clear data dependencies of ${facet.id}`);
+            facet.dependencies.forEach(id => {
+              let dependencyFacet = ns.getFacet(id);
+              dependencyFacet.clear();
+              dependencyFacet.clearDependencies();
+            })
+          }
+
           // Like getData but in an asynchronous fashion
           facet.callData = function (callback) {
             if (facet.isReady()) {
