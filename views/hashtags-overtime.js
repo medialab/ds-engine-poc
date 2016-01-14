@@ -11,10 +11,7 @@ angular.module('thisApp.hashtags-overtime', ['ngRoute'])
 
 .controller('HashtagsOvertimeController', function($scope, $location, Facets) {
   $scope.loading = true;
-  $scope.touchDate = function () {
-    $scope.startTime = 1441700000000;
-    $scope.endTime = 1442700000000;
-  }
+
   loadFacets(() => {
     console.log('loaded');
   });

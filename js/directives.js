@@ -23,10 +23,10 @@ angular.module('thisApp.directives', [])
     }
   }])
 
+
   .directive('dailyCount', [function (){
     return {
       restrict: 'E',
-      templateUrl: 'partials/dailyCount.html',
       scope: {
         data: '=',
         timeAccessor: '=',
@@ -35,33 +35,29 @@ angular.module('thisApp.directives', [])
         to: '=',
       },
       link: function($scope, el, attrs) {
+        let elId = el.attr('id')
+        if (!elId) {console.log('Element id missing -> causes issues')};
+
+        el.html('<div class="simple-curve">Loading...</div>');
+
         $scope.$watch('data', () => {
           if ($scope.data !== undefined){
             let data = $scope.data;
             let getTime = $scope.timeAccessor;
             let getVolume = $scope.volumeAccessor;
-            $('.brush-curve').html('');
+            $(`#${elId} .simple-curve`).html('');
 
-            var margin = {top: 10, right: 10, bottom: 100, left: 40},
-                margin2 = {top: 430, right: 10, bottom: 20, left: 40},
+            var margin = {top: 10, right: 10, bottom: 30, left: 40},
                 width = 960 - margin.left - margin.right,
-                height = 500 - margin.top - margin.bottom,
-                height2 = 500 - margin2.top - margin2.bottom;
+                height = 300 - margin.top - margin.bottom
 
             var parseDate = d3.time.format("%b %Y").parse;
 
             var x = d3.time.scale().range([0, width]),
-                x2 = d3.time.scale().range([0, width]),
-                y = d3.scale.linear().range([height, 0]),
-                y2 = d3.scale.linear().range([height2, 0]);
+                y = d3.scale.linear().range([height, 0])
 
             var xAxis = d3.svg.axis().scale(x).orient("bottom"),
-                xAxis2 = d3.svg.axis().scale(x2).orient("bottom"),
                 yAxis = d3.svg.axis().scale(y).orient("left");
-
-            var brush = d3.svg.brush()
-                .x(x2)
-                .on("brush", brushed);
 
             var area = d3.svg.area()
                 .interpolate("monotone")
@@ -69,18 +65,13 @@ angular.module('thisApp.directives', [])
                 .y0(height)
                 .y1(function(d) { return y(getVolume(d)); });
 
-            var area2 = d3.svg.area()
-                .interpolate("monotone")
-                .x(function(d) { return x2(getTime(d)); })
-                .y0(height2)
-                .y1(function(d) { return y2(getVolume(d)); });
-
-            var svg = d3.select(".brush-curve").append("svg")
+            var svg = d3.select(`#${elId} .simple-curve`).append("svg")
                 .attr("width", width + margin.left + margin.right)
-                .attr("height", height + margin.top + margin.bottom);
+                .attr("height", height + margin.top + margin.bottom)
+                .style('font', '10px sans-serif');
 
             svg.append("defs").append("clipPath")
-                .attr("id", "clip")
+                .attr("id", `${elId}-clip`)
               .append("rect")
                 .attr("width", width)
                 .attr("height", height);
@@ -89,19 +80,15 @@ angular.module('thisApp.directives', [])
                 .attr("class", "focus")
                 .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-            var context = svg.append("g")
-                .attr("class", "context")
-                .attr("transform", "translate(" + margin2.left + "," + margin2.top + ")");
-
             x.domain(d3.extent(data.map(getTime)));
             y.domain([0, d3.max(data.map(getVolume))]);
-            x2.domain(x.domain());
-            y2.domain(y.domain());
 
             focus.append("path")
                 .datum(data)
                 .attr("class", "area")
-                .attr("d", area);
+                .attr("d", area)
+                .style('fill', 'steelblue')
+                .style('clip-path', `url(#${elId}-clip)`);
 
             focus.append("g")
                 .attr("class", "x axis")
@@ -112,25 +99,23 @@ angular.module('thisApp.directives', [])
                 .attr("class", "y axis")
                 .call(yAxis);
 
-            context.append("path")
-                .datum(data)
-                .attr("class", "area")
-                .attr("d", area2);
+            d3.selectAll(`#${elId} .axis path, #${elId} .axis line`)
+              .style('fill', 'none')
+              .style('stroke', '#000')
+              .style('shape-rendering', 'crispEdges')
 
-            context.append("g")
-                .attr("class", "x axis")
-                .attr("transform", "translate(0," + height2 + ")")
-                .call(xAxis2);
+            // Listen to angular
+            $scope.$watchGroup(['from', 'to'], function(newValues, oldValues, scope) {
+              let from = newValues[0];
+              let to = newValues[1];
+              if (from && to) {
+                let extent = [new Date(from), new Date(to)];
+                updateBrush(extent);
+              }
+            })
 
-            context.append("g")
-                .attr("class", "x brush")
-                .call(brush)
-              .selectAll("rect")
-                .attr("y", -6)
-                .attr("height", height2 + 7);
-
-            function brushed() {
-              x.domain(brush.empty() ? x2.domain() : brush.extent());
+            function updateBrush(extent) {
+              x.domain(extent);
               focus.select(".area").attr("d", area);
               focus.select(".x.axis").call(xAxis);
             }
@@ -143,7 +128,6 @@ angular.module('thisApp.directives', [])
   .directive('dailyCountBrushable', [function (){
     return {
       restrict: 'E',
-      templateUrl: 'partials/dailyCount.html',
       scope: {
         data: '=',
         timeAccessor: '=',
@@ -152,91 +136,62 @@ angular.module('thisApp.directives', [])
         to: '=',
       },
       link: function($scope, el, attrs) {
+        let elId = el.attr('id')
+        if (!elId) {console.log('Element id missing -> causes issues')};
+
+        el.html('<div class="brush-curve">Loading...</div>');
+
         $scope.$watch('data', () => {
           if ($scope.data !== undefined){
             let data = $scope.data;
             let getTime = $scope.timeAccessor;
             let getVolume = $scope.volumeAccessor;
-            $('.brush-curve').html('');
+            $(`#${elId} .brush-curve`).html('');
 
-            var margin = {top: 10, right: 10, bottom: 100, left: 40},
-                margin2 = {top: 430, right: 10, bottom: 20, left: 40},
+            var margin = {top: 10, right: 10, bottom: 20, left: 40},
                 width = 960 - margin.left - margin.right,
-                height = 500 - margin.top - margin.bottom,
-                height2 = 500 - margin2.top - margin2.bottom;
+                height = 100 - margin.top - margin.bottom;
 
             var parseDate = d3.time.format("%b %Y").parse;
 
-            var x = d3.time.scale().range([0, width]),
-                x2 = d3.time.scale().range([0, width]),
-                y = d3.scale.linear().range([height, 0]),
-                y2 = d3.scale.linear().range([height2, 0]);
+            var x2 = d3.time.scale().range([0, width]),
+                y2 = d3.scale.linear().range([height, 0]);
 
-            var xAxis = d3.svg.axis().scale(x).orient("bottom"),
-                xAxis2 = d3.svg.axis().scale(x2).orient("bottom"),
-                yAxis = d3.svg.axis().scale(y).orient("left");
+            var xAxis2 = d3.svg.axis().scale(x2).orient("bottom"),
+                yAxis = d3.svg.axis().scale(y2).orient("left");
 
             var brush = d3.svg.brush()
                 .x(x2)
                 .on("brush", brushed);
 
-            var area = d3.svg.area()
-                .interpolate("monotone")
-                .x(function(d) { return x(getTime(d)); })
-                .y0(height)
-                .y1(function(d) { return y(getVolume(d)); });
-
             var area2 = d3.svg.area()
                 .interpolate("monotone")
                 .x(function(d) { return x2(getTime(d)); })
-                .y0(height2)
+                .y0(height)
                 .y1(function(d) { return y2(getVolume(d)); });
 
-            var svg = d3.select(".brush-curve").append("svg")
+            var svg = d3.select(`#${elId} .brush-curve`).append("svg")
                 .attr("width", width + margin.left + margin.right)
-                .attr("height", height + margin.top + margin.bottom);
-
-            svg.append("defs").append("clipPath")
-                .attr("id", "clip")
-              .append("rect")
-                .attr("width", width)
-                .attr("height", height);
-
-            var focus = svg.append("g")
-                .attr("class", "focus")
-                .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+                .attr("height", height + margin.top + margin.bottom)
+                .style('font', '10px sans-serif');
 
             var context = svg.append("g")
                 .attr("class", "context")
-                .attr("transform", "translate(" + margin2.left + "," + margin2.top + ")");
+                .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-            x.domain(d3.extent(data.map(getTime)));
-            y.domain([0, d3.max(data.map(getVolume))]);
-            x2.domain(x.domain());
-            y2.domain(y.domain());
-
-            focus.append("path")
-                .datum(data)
-                .attr("class", "area")
-                .attr("d", area);
-
-            focus.append("g")
-                .attr("class", "x axis")
-                .attr("transform", "translate(0," + height + ")")
-                .call(xAxis);
-
-            focus.append("g")
-                .attr("class", "y axis")
-                .call(yAxis);
+            x2.domain(d3.extent(data.map(getTime)));
+            y2.domain([0, d3.max(data.map(getVolume))]);
 
             context.append("path")
                 .datum(data)
                 .attr("class", "area")
-                .attr("d", area2);
+                .attr("d", area2)
+                .style('fill', 'steelblue')
+                .style('clip-path', `url(#${elId}-clip)`);
 
             context.append("g")
                 .attr("class", "x axis")
-                .attr("transform", "translate(0," + height2 + ")")
+                .attr("transform", "translate(0," + height + ")")
                 .call(xAxis2);
 
             context.append("g")
@@ -244,7 +199,17 @@ angular.module('thisApp.directives', [])
                 .call(brush)
               .selectAll("rect")
                 .attr("y", -6)
-                .attr("height", height2 + 7);
+                .attr("height", height + 7);
+
+            d3.selectAll(`#${elId} .axis path, #${elId} .axis line`)
+              .style('fill', 'none')
+              .style('stroke', '#000')
+              .style('shape-rendering', 'crispEdges');
+
+            d3.selectAll(`#${elId} .brush .extent `)
+              .style('stroke', '#fff')
+              .style('fill-opacity', '.125')
+              .style('shape-rendering', 'crispEdges');
 
             // Listen to angular
             $scope.$watchGroup(['from', 'to'], function(newValues, oldValues, scope) {
@@ -253,23 +218,15 @@ angular.module('thisApp.directives', [])
               if (from && to) {
                 let extent = [new Date(from), new Date(to)];
                 brush.extent(extent);
-                updateBrush(extent);
                 svg.select(".brush").call(brush);
               }
             })
 
             function brushed() {
               let extent = brush.extent();
-              updateBrush(extent);
               $scope.from = extent[0].getTime();
               $scope.to = extent[1].getTime();
               $scope.$apply();
-            }
-
-            function updateBrush(extent) {
-              x.domain(brush.empty() ? x2.domain() : extent);
-              focus.select(".area").attr("d", area);
-              focus.select(".x.axis").call(xAxis);
             }
           }
         });
