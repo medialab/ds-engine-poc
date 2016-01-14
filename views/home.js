@@ -10,12 +10,12 @@ angular.module('thisApp.home', ['ngRoute'])
 }])
 
 .controller('HomeController', function($scope, $location, Facets) {
-  Facets.tweetList.retrieveData(function(d){
-    console.log(d);
-    Facets.tweetCount.retrieveData(function(d){
-      $scope.tweetCount = d;
-      $scope.$apply();
-    });
+  Facets.hashtagList.retrieveData(function(d){
+    console.log(d.filter((x, i) => {return i < 10;}));
   })
+
+  $scope.clear = function () {
+    Facets.tweetList.clear();
+  }
   
 });

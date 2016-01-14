@@ -54,6 +54,7 @@ angular.module('thisApp.services', [])
 
           // Other transfered attributes
           [
+            'id',
             'text',
             'lang',
             'location',
@@ -78,7 +79,25 @@ angular.module('thisApp.services', [])
       dependencies: ['tweetList'],
       compute: function () {
         const tweetList = FacetFactory.getFacet('tweetList').getData();
-        // TODO: actually compute the list of hashtags
+        let hashtagsIndex = {};
+
+        tweetList.forEach(item => {
+          // Extract hashtags
+          let hashtags = item.text.match(/[#]+[A-Za-z0-9-_]+/g) || [];
+          hashtags.forEach(ht => {
+            let htData = hashtagsIndex[ht] || {tweetIdList:[]};
+            htData.tweetIdList.push(item.id);
+            hashtagsIndex[ht] = htData;
+          });
+        });
+
+        let hashtagList = [];
+        for (let ht in hashtagsIndex) {
+          let htData = hashtagsIndex[ht];
+          hashtagList.push({text:ht, tweetIdList:htData.tweetIdList});
+        }
+
+        return hashtagList;
       }
     });
 
