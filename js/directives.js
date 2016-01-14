@@ -246,14 +246,30 @@ angular.module('thisApp.directives', [])
                 .attr("y", -6)
                 .attr("height", height2 + 7);
 
+            // Listen to angular
+            $scope.$watchGroup(['from', 'to'], function(newValues, oldValues, scope) {
+              let from = newValues[0];
+              let to = newValues[1];
+              if (from && to) {
+                let extent = [new Date(from), new Date(to)];
+                brush.extent(extent);
+                updateBrush(extent);
+                svg.select(".brush").call(brush);
+              }
+            })
+
             function brushed() {
               let extent = brush.extent();
-              x.domain(brush.empty() ? x2.domain() : extent);
-              focus.select(".area").attr("d", area);
-              focus.select(".x.axis").call(xAxis);
+              updateBrush(extent);
               $scope.from = extent[0].getTime();
               $scope.to = extent[1].getTime();
               $scope.$apply();
+            }
+
+            function updateBrush(extent) {
+              x.domain(brush.empty() ? x2.domain() : extent);
+              focus.select(".area").attr("d", area);
+              focus.select(".x.axis").call(xAxis);
             }
           }
         });
