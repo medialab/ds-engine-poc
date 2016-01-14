@@ -21,7 +21,7 @@ angular.module('thisApp.services', [])
       cached: true,
       dependencies:['tweets.csv'],
       // Optional, because implicit, but it is clearer to specify it
-      type: 'json',
+      type: 'csv',
       compute: function(){
         let tweets_csvData = FacetFactory.getFacet('tweets.csv').getData();
         let data = [...tweets_csvData].map(item => {
@@ -522,6 +522,7 @@ angular.module('thisApp.services', [])
           // Keep facet
         } else {
           // delete
+          facet.clear();
           ns.deleteFacet(facet.id);
         }
       });
