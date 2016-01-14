@@ -26,6 +26,8 @@ angular.module('thisApp.hashtags-overtime', ['ngRoute'])
 
     Facets.tweetsTotalDaily.retrieveData(ttdData => {
       $scope.tweetsTotalDaily = ttdData;
+      $scope.ttdGetTime = d => d.time;
+      $scope.ttdGetVolume = d => d.count;
       finalize();
     });
     // let htTimeFacet = Facets.getHashtagListForPeriod(1435733150000, 1435736100000);

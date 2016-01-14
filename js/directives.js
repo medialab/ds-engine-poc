@@ -28,12 +28,16 @@ angular.module('thisApp.directives', [])
       restrict: 'E',
       templateUrl: 'partials/dailyCount.html',
       scope: {
-        data: '='
+        data: '=',
+        timeAccessor: '=',
+        volumeAccessor: '=',
       },
       link: function($scope, el, attrs) {
         $scope.$watch('data', () => {
           if ($scope.data !== undefined){
             let data = $scope.data;
+            let getTime = $scope.timeAccessor;
+            let getVolume = $scope.volumeAccessor;
             $('.brush-curve').html('');
 
             var margin = {top: 10, right: 10, bottom: 100, left: 40},
@@ -59,15 +63,15 @@ angular.module('thisApp.directives', [])
 
             var area = d3.svg.area()
                 .interpolate("monotone")
-                .x(function(d) { return x(d.time); })
+                .x(function(d) { return x(getTime(d)); })
                 .y0(height)
-                .y1(function(d) { return y(d.count); });
+                .y1(function(d) { return y(getVolume(d)); });
 
             var area2 = d3.svg.area()
                 .interpolate("monotone")
-                .x(function(d) { return x2(d.time); })
+                .x(function(d) { return x2(getTime(d)); })
                 .y0(height2)
-                .y1(function(d) { return y2(d.count); });
+                .y1(function(d) { return y2(getVolume(d)); });
 
             var svg = d3.select(".brush-curve").append("svg")
                 .attr("width", width + margin.left + margin.right)
@@ -87,8 +91,8 @@ angular.module('thisApp.directives', [])
                 .attr("class", "context")
                 .attr("transform", "translate(" + margin2.left + "," + margin2.top + ")");
 
-            x.domain(d3.extent(data.map(function(d) { return d.time; })));
-            y.domain([0, d3.max(data.map(function(d) { return d.count; }))]);
+            x.domain(d3.extent(data.map(getTime)));
+            y.domain([0, d3.max(data.map(getVolume))]);
             x2.domain(x.domain());
             y2.domain(y.domain());
 
@@ -127,12 +131,6 @@ angular.module('thisApp.directives', [])
               x.domain(brush.empty() ? x2.domain() : brush.extent());
               focus.select(".area").attr("d", area);
               focus.select(".x.axis").call(xAxis);
-            }
-
-            function type(d) {
-              d.time = parseDate(d.time);
-              d.count = +d.count;
-              return d;
             }
           }
         });
