@@ -140,6 +140,19 @@ h1, h2, h3, h4, h5, h6 {
   text-align: center;
 }
 
+/* Misc */
+span.dot{
+  width: 12px;
+  height: 12px;
+  display: inline-block;
+  border-radius: 6px;
+  background-color: #999;
+}
+td.key-cell {
+  padding-right: 24px;
+}
+
+
 /* Sigma */
 .sigma-parent {
   position: relative;

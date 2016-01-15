@@ -458,7 +458,6 @@ angular.module('thisApp.directives', ['angularUtils.directives.dirPagination'])
         })
 
         function displayFacet(from, to, tweetsLimit, hashtagsMinDegree, usersMinDegree, hashtagsLimit, usersLimit) {
-          console.log('MASK', $scope.mask);
           if (from && to){
             $scope.loading = true;
             $timeout(() => {

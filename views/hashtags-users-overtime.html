@@ -40,18 +40,31 @@
 
       <div class="viz-card">
         <h3>Hashtags x users over this period</h3>
-        <hashtags-users-by-period
-          from="startTime_slowUpdate"
-          to="endTime_slowUpdate"
-          default-from="timeMin"
-          default-to="timeMax"
-          mask="mask"
-          tweets-limit="500000"
-          hashtags-min-degree="3"
-          hashtags-limit="200"
-          users-min-degree="3"
-          users-limit="200"
-        />
+        <div>
+          <hashtags-users-by-period
+            from="startTime_slowUpdate"
+            to="endTime_slowUpdate"
+            default-from="timeMin"
+            default-to="timeMax"
+            mask="mask"
+            tweets-limit="500000"
+            hashtags-min-degree="3"
+            hashtags-limit="200"
+            users-min-degree="3"
+            users-limit="200"
+          />
+        </div>
+        <br>
+        <div>
+          <table>
+            <tr>
+              <td class="key-cell"><span class="dot" style="background-color: #9999AA;"></span>&nbsp;#Hashtag</td>
+              <td class="key-cell"><span class="dot" style="background-color: #443333;"></span>&nbsp;@User</td>
+              <td class="key-cell"><span class="dot" style="background-color: #B92106;"></span>&nbsp;Top 50 @User LEFT WING</td>
+              <td class="key-cell"><span class="dot" style="background-color: #0769D3;"></span>&nbsp;Top 50 @User RIGHT WING</td>
+            </tr>
+          </table>
+        </div>
       </div>
     </div>
   </div>

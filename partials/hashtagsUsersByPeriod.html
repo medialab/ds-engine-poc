@@ -1,19 +1,21 @@
-<div ng-show="loading">LOADING...</div>
-<div ng-show="!loading">
-  <div ng-show="overLimit">
-     TOO MANY TWEETS ({{tweetCount|number}}) - Please select a time span with less than {{tweetsLimit|number}}.
-  </div>
-  <div ng-show="!overLimit">
-    <div>
-      <p class="text-muted">Hashtags and Users from {{tweetCount|number}} tweets -
-        <span ng-show="hashtagsLimit">#hashtags limited to {{hashtagsLimit|number}}</span>
-        <span ng-show="hashtagsMinDegree">and to {{hashtagsMinDegree|number}}+ degree</span>
-        <span ng-show="usersLimit">- @users limited to {{usersLimit|number}}</span>
-        <span ng-show="usersMinDegree">and to {{usersMinDegree|number}}+ degree</span>
-      </p>
+<div style="height: 300px;">
+  <div ng-show="loading">LOADING...</div>
+  <div ng-show="!loading">
+    <div ng-show="overLimit">
+       TOO MANY TWEETS ({{tweetCount|number}}) - Please select a time span with less than {{tweetsLimit|number}}.
     </div>
-    <div style="height: 400px;">
-      <sigma-network network="network" mask="mask"/>
+    <div ng-show="!overLimit">
+      <div>
+        <p class="text-muted">Hashtags and Users from {{tweetCount|number}} tweets -
+          <span ng-show="hashtagsLimit">#hashtags limited to {{hashtagsLimit|number}}</span>
+          <span ng-show="hashtagsMinDegree">and to {{hashtagsMinDegree|number}}+ degree</span>
+          <span ng-show="usersLimit">- @users limited to {{usersLimit|number}}</span>
+          <span ng-show="usersMinDegree">and to {{usersMinDegree|number}}+ degree</span>
+        </p>
+      </div>
+      <div>
+        <sigma-network network="network" mask="mask"/>
+      </div>
     </div>
   </div>
 </div>
