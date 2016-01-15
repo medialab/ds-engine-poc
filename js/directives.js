@@ -333,10 +333,11 @@ angular.module('thisApp.directives', ['angularUtils.directives.dirPagination'])
             edgeColor: 'default',
             defaultEdgeColor: '#ECE8E5',
             defaultNodeColor: '#999',
-            minNodeSize: 0.3,
-            maxNodeSize: 5,
+            minNodeSize: 2,
+            maxNodeSize: 10,
             zoomMax: 5,
             zoomMin: 0.002,
+            labelThreshold: 6,
           });
 
           // Populate

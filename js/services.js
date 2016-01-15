@@ -347,7 +347,7 @@ angular.module('thisApp.services', [])
                 id: user,
                 label: user,
                 type: 'user',
-                size: 20 * Math.sqrt(1+uData.count),
+                size: 10 * Math.sqrt(1+uData.count),
                 count: uData.count,
                 x: Math.random(),
                 y: Math.random(),
