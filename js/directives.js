@@ -49,7 +49,7 @@ angular.module('thisApp.directives', ['angularUtils.directives.dirPagination'])
               let getVolume = $scope.volumeAccessor;
               $(`#${elId} .simple-curve`).html('');
 
-              var margin = {top: 10, right: 10, bottom: 30, left: 40},
+              var margin = {top: 10, right: 40, bottom: 30, left: 40},
                   width = $(`#${elId} .brush-curve`).width() - margin.left - margin.right,
                   height = 300 - margin.top - margin.bottom
 
@@ -153,7 +153,7 @@ angular.module('thisApp.directives', ['angularUtils.directives.dirPagination'])
               let getVolume = $scope.volumeAccessor;
               $(`#${elId} .brush-curve`).html('');
 
-              var margin = {top: 10, right: 10, bottom: 20, left: 40},
+              var margin = {top: 10, right: 40, bottom: 20, left: 40},
                   width = $(`#${elId} .brush-curve`).width() - margin.left - margin.right,
                   height = 100 - margin.top - margin.bottom;
 
@@ -266,6 +266,9 @@ angular.module('thisApp.directives', ['angularUtils.directives.dirPagination'])
       link: function($scope, el, attrs) {
         $scope.pending = true;
         let sigmaInstance;
+        let mask = {
+          nodes: {},
+        };
 
         $scope.$watch('network', function (newValue, oldValue, $scope) {
           let network = newValue;
@@ -349,6 +352,7 @@ angular.module('thisApp.directives', ['angularUtils.directives.dirPagination'])
           // Populate
           $window.g = $scope.network;
           sigmaInstance.graph.read($scope.network);
+          applyMask();
 
           // Force Atlas 2 settings
           sigmaInstance.configForceAtlas2({
@@ -386,9 +390,26 @@ angular.module('thisApp.directives', ['angularUtils.directives.dirPagination'])
 
         function killSigma(){
           if (sigmaInstance) {
+            updateMask();
             $scope.stopSpatialization();
             sigmaInstance.kill();
           }
+        }
+
+        function updateMask() {
+          sigmaInstance.graph.nodes().forEach(n => {
+            mask.nodes[n.id] = {x:n.x, y:n.y};
+          });
+        }
+
+        function applyMask() {
+          sigmaInstance.graph.nodes().forEach(n => {
+            var nMask = mask.nodes[n.id]
+            if (nMask) {
+              n.x = nMask.x;
+              n.y = nMask.y;
+            }
+          });
         }
       }
     }
