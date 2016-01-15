@@ -371,7 +371,7 @@ angular.module('thisApp.services', [])
             });
           }
 
-          return {network: {nodes: nodeList, edges: edgeList}};
+          return {network: {nodes: nodeList, edges: edgeList}, tweetCount:tweetList.length || 0};
         }
       });
     }

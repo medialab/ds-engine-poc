@@ -5,9 +5,14 @@
   </div>
   <div ng-show="!overLimit">
     <div>
-      <p class="text-muted">Hashtags and Users from {{tweetCount|number}} tweets</p>
+      <p class="text-muted">Hashtags and Users from {{tweetCount|number}} tweets -
+        <span ng-show="hashtagsLimit">#hashtags limited to {{hashtagsLimit|number}}</span>
+        <span ng-show="hashtagsMinDegree">and to {{hashtagsMinDegree|number}}+ degree</span>
+        <span ng-show="usersLimit">- @users limited to {{usersLimit|number}}</span>
+        <span ng-show="usersMinDegree">and to {{usersMinDegree|number}}+ degree</span>
+      </p>
     </div>
-    <div style="height: 500px;">
+    <div style="height: 400px;">
       <sigma-network network="network"/>
     </div>
   </div>
