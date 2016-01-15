@@ -184,7 +184,11 @@ angular.module('thisApp.services', [])
     }
 
     // Get a network of #hashtags and @users with a time span
-    ns.getHashtagUserNetworkForPeriod = function (from, to, tweetsLimit) {
+    ns.getHashtagUserNetworkForPeriod = function (from, to, tweetsLimit, hashtagsMinDegree_, usersMinDegree_, hashtagsLimit_, usersLimit_) {
+      const hashtagsMinDegree = hashtagsMinDegree_ || 0;
+      const usersMinDegree = usersMinDegree_ || 0;
+      const hashtagsLimit = hashtagsLimit_ || 100000;
+      const usersLimit = usersLimit_ || 100000;
       return FacetFactory.newFacet(`hashtagUserNetwork-from-${from}-to-${to}-tlimit-${tweetsLimit}`, {
         dependencies: ['tweetList'],
         ephemeral: true,
@@ -203,14 +207,14 @@ angular.module('thisApp.services', [])
           tweetList.forEach(item => {
             // User
             let user = '@' + item.from_user_name;
-            let uData = usersIndex[user] || {count: 0};
+            let uData = usersIndex[user] || {count: 0, degree:0};
             uData.count++;
             usersIndex[user] = uData;
             // Extract hashtags
             let hashtags = item.text.match(/[#]+[A-Za-z0-9-_]+/g) || [];
             hashtags.forEach(ht => {
               // Hashtag
-              let htData = hashtagsIndex[ht] || {count: 0};
+              let htData = hashtagsIndex[ht] || {count: 0, degree:0};
               htData.count++;
               hashtagsIndex[ht] = htData;
               // Link
@@ -218,10 +222,108 @@ angular.module('thisApp.services', [])
               let lData = linksIndex[link] || {count: 0};
               lData.count++;
               linksIndex[link] = lData;
+              // Degrees: if lData === 1 then the link was just created
+              if (lData.count === 1) {
+                uData.degree++;
+                htData.degree++;
+              }
             });
           });
 
-          // TODO: Filter the network
+          // Filter nodes 1/2: filter by degree limit
+          let keepNodes = {};
+          for (let ht in hashtagsIndex) {
+            let htData = hashtagsIndex[ht];
+            if (htData.degree >= hashtagsMinDegree) {
+              htData.keep = true;
+              keepNodes[ht] = true;
+            } else {
+              htData.keep = false;
+            }
+          }
+          for (let user in usersIndex) {
+            let uData = usersIndex[user];
+            if (uData.degree >= usersMinDegree) {
+              uData.keep = true;
+              keepNodes[user] = true;
+            } else {
+              uData.keep = false;
+            }
+          }
+          for (let l in linksIndex) {
+            let lData = linksIndex[l];
+            let splt = l.split(' ');
+            let source = splt[0];
+            let target = splt[1];
+            if (!(keepNodes[source] && keepNodes[target])) {
+              delete linksIndex[l];
+            }
+          }
+          for (let ht in hashtagsIndex) {
+            let htData = hashtagsIndex[ht];
+            if (!htData.keep) {delete hashtagsIndex[ht]}
+          }
+          for (let user in usersIndex) {
+            let uData = usersIndex[user];
+            if (!uData.keep) {delete usersIndex[user]}
+          }
+
+          // Filter nodes 2/2: limit by count
+          let hashtagsAsList = [];
+          for (let ht in hashtagsIndex) {
+            let htData = hashtagsIndex[ht];
+            htData.id = ht;
+            hashtagsAsList.push(htData);
+          }
+          let usersAsList = [];
+          for (let user in usersIndex) {
+            let uData = usersIndex[user];
+            uData.id = user;
+            usersAsList.push(uData);
+          }
+          keepNodes = {}
+          hashtagsAsList.sort(function(a,b){
+            return b.count - a.count;
+          })
+            .forEach((htData, i) => {
+              if (i < hashtagsLimit) {
+                keepNodes[htData.id] = true;
+                hashtagsIndex[htData.id].keep = true;
+              } else {
+                keepNodes[htData.id] = false;
+                hashtagsIndex[htData.id].keep = false;
+              }
+            })
+          usersAsList.sort(function(a,b){
+            return b.count - a.count;
+          })
+            .forEach((uData, i) => {
+              if (i < usersLimit) {
+                keepNodes[uData.id] = true;
+                usersIndex[uData.id].keep = true;
+              } else {
+                keepNodes[uData.id] = false;
+                usersIndex[uData.id].keep = false;
+              }
+            })
+          for (let l in linksIndex) {
+            let lData = linksIndex[l];
+            let splt = l.split(' ');
+            let source = splt[0];
+            let target = splt[1];
+            if (!(keepNodes[source] && keepNodes[target])) {
+              delete linksIndex[l];
+            }
+          }
+          for (let ht in hashtagsIndex) {
+            let htData = hashtagsIndex[ht];
+            if (!htData.keep) {delete hashtagsIndex[ht]}
+          }
+          for (let user in usersIndex) {
+            let uData = usersIndex[user];
+            if (!uData.keep) {delete usersIndex[user]}
+          }
+
 
           let nodeList = [];
           for (let ht in hashtagsIndex) {
@@ -230,25 +332,29 @@ angular.module('thisApp.services', [])
               id: ht,
               label: ht,
               type: 'hashtag',
-              size: Math.sqrt(1+htData.count),
+              size: 10 * Math.sqrt(1+htData.count),
               count: htData.count,
               x: Math.random(),
               y: Math.random(),
               color: '#2E3B94',
+              degree: htData.degree,
             });
           }
           for (let user in usersIndex) {
             let uData = usersIndex[user];
-            nodeList.push({
-              id: user,
-              label: user,
-              type: 'user',
-              size: Math.sqrt(1+uData.count),
-              count: uData.count,
-              x: Math.random(),
-              y: Math.random(),
-              color: '#A81A00',
-            });
+            if (uData.keep) {
+              nodeList.push({
+                id: user,
+                label: user,
+                type: 'user',
+                size: 20 * Math.sqrt(1+uData.count),
+                count: uData.count,
+                x: Math.random(),
+                y: Math.random(),
+                color: '#A81A00',
+                degree: uData.degree,
+              });
+            }
           }
           let edgeList = [];
           let count = 0;

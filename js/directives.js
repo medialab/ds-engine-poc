@@ -396,6 +396,10 @@ angular.module('thisApp.directives', ['angularUtils.directives.dirPagination'])
         defaultFrom: '=',
         defaultTo: '=',
         tweetsLimit: '=',
+        hashtagsMinDegree: '=',
+        usersMinDegree: '=',
+        hashtagsLimit: '=',
+        usersLimit: '=',
       },
       templateUrl: 'partials/hashtagsUsersByPeriod.html',
       link: function($scope, el, attrs) {
@@ -406,17 +410,17 @@ angular.module('thisApp.directives', ['angularUtils.directives.dirPagination'])
           let defaultFrom = newValues[2];
           let defaultTo = newValues[3];
           if (from && to && from != to) {
-            displayFacet(from, to, $scope.tweetsLimit);
+            displayFacet(from, to, $scope.tweetsLimit, $scope.hashtagsMinDegree, $scope.usersMinDegree, $scope.hashtagsLimit, $scope.usersLimit);
           } else if (defaultFrom && defaultTo) {
-            displayFacet(defaultFrom, defaultTo, $scope.tweetsLimit);
+            displayFacet(defaultFrom, defaultTo, $scope.tweetsLimit, $scope.hashtagsMinDegree, $scope.usersMinDegree, $scope.hashtagsLimit, $scope.usersLimit);
           }
         })
 
-        function displayFacet(from, to, tweetsLimit) {
+        function displayFacet(from, to, tweetsLimit, hashtagsMinDegree, usersMinDegree, hashtagsLimit, usersLimit) {
           if (from && to){
             $scope.loading = true;
             $timeout(() => {
-              Facets.getHashtagUserNetworkForPeriod(from, to, +tweetsLimit).retrieveData(result => {
+              Facets.getHashtagUserNetworkForPeriod(from, to, +tweetsLimit, +hashtagsMinDegree, +usersMinDegree, +hashtagsLimit, +usersLimit).retrieveData(result => {
                 $scope.loading = false;
                 if (result.overLimit) {
                   $scope.overLimit = true;
