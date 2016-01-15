@@ -208,9 +208,8 @@ angular.module('thisApp.services', [])
             usersIndex[user] = uData;
             // Extract hashtags
             let hashtags = item.text.match(/[#]+[A-Za-z0-9-_]+/g) || [];
-            hashtags.forEach(ht_ => {
+            hashtags.forEach(ht => {
               // Hashtag
-              let ht = '#' + ht_;
               let htData = hashtagsIndex[ht] || {count: 0};
               htData.count++;
               hashtagsIndex[ht] = htData;
@@ -235,7 +234,7 @@ angular.module('thisApp.services', [])
               count: htData.count,
               x: Math.random(),
               y: Math.random(),
-              color: '#FF9',
+              color: '#2E3B94',
             });
           }
           for (let user in usersIndex) {
@@ -248,7 +247,7 @@ angular.module('thisApp.services', [])
               count: uData.count,
               x: Math.random(),
               y: Math.random(),
-              color: '#9FF',
+              color: '#A81A00',
             });
           }
           let edgeList = [];

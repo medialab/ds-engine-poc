@@ -260,13 +260,16 @@ angular.module('thisApp.directives', ['angularUtils.directives.dirPagination'])
       link: function($scope, el, attrs) {
         $scope.pending = true;
         let sigmaInstance;
-        $scope.initSigma = initSigma;
 
         $scope.$watch('network', function (newValue, oldValue, $scope) {
           let network = newValue;
           if (network) {
             $scope.pending = false;
-            initSigma();
+            $timeout(() => {
+              $scope.stopSpatialization();
+              killSigma();
+              initSigma();
+            }, 0, false);
           }
         });
 
@@ -315,7 +318,9 @@ angular.module('thisApp.directives', ['angularUtils.directives.dirPagination'])
 
         $scope.stopSpatialization = function () {
           $scope.spatializationRunning = false;
-          sigmaInstance.killForceAtlas2();
+          if (sigmaInstance) {
+            sigmaInstance.killForceAtlas2();
+          }
         }
 
         function initSigma () {
@@ -334,32 +339,9 @@ angular.module('thisApp.directives', ['angularUtils.directives.dirPagination'])
             zoomMin: 0.002,
           });
 
-          // TODO: rework that "populate" part...
           // Populate
-          $window.g = $scope.network
+          $window.g = $scope.network;
           sigmaInstance.graph.read($scope.network);
-          // $scope.network.nodes
-          //   .forEach(function(node){
-          //     var degree = node.inEdges.length + node.outEdges.length
-          //     sigmaInstance.graph.addNode({
-          //       id: node.id
-          //       ,label: node.label
-          //       ,'x': Math.random()
-          //       ,'y': Math.random()
-          //       ,'degree': degree
-          //       ,'hidden': node.hidden
-          //       ,'size': 1 + Math.log(1 + 0.1 * degree )
-          //       ,'color': node.color
-          //     })
-          //   })
-          // $scope.network.edges
-          //   .forEach(function(link, i){
-          //     sigmaInstance.graph.addEdge({
-          //       'id': 'e'+i
-          //       ,'source': link.sourceID
-          //       ,'target': link.targetID
-          //     })
-          //   })
 
           // Force Atlas 2 settings
           sigmaInstance.configForceAtlas2({
@@ -388,7 +370,7 @@ angular.module('thisApp.directives', ['angularUtils.directives.dirPagination'])
 
           sigmaInstance.bind('clickNode', e => {
             // TODO: do something on node click
-            // let path = window.location.href.replace(window.location.hash, "") + '#/project/' + $scope.corpusId + '/webentity/' + weId;
+            // let path = '...';
             // $window.open(path, '_blank');
           });
 
