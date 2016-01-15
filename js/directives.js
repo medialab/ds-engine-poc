@@ -261,17 +261,21 @@ angular.module('thisApp.directives', ['angularUtils.directives.dirPagination'])
       retrict: 'E',
       scope: {
         network: '=',
+        mask: '=',
       },
       templateUrl: 'partials/sigmaNetwork.html',
       link: function($scope, el, attrs) {
         $scope.pending = true;
         let sigmaInstance;
-        let mask = {
+        let internalMask = {
           nodes: {},
         };
 
-        $scope.$watch('network', function (newValue, oldValue, $scope) {
-          let network = newValue;
+        $scope.$watchGroup(['network', 'mask'], function (newValues, oldValues, $scope) {
+          let network = newValues[0];
+          if (!$scope.mask) {
+            $scope.mask = {nodes:{}};
+          }
           if (network) {
             $scope.pending = false;
             $timeout(() => {
@@ -352,7 +356,7 @@ angular.module('thisApp.directives', ['angularUtils.directives.dirPagination'])
           // Populate
           $window.g = $scope.network;
           sigmaInstance.graph.read($scope.network);
-          applyMask();
+          applyMasks();
 
           // Force Atlas 2 settings
           sigmaInstance.configForceAtlas2({
@@ -390,25 +394,33 @@ angular.module('thisApp.directives', ['angularUtils.directives.dirPagination'])
 
         function killSigma(){
           if (sigmaInstance) {
-            updateMask();
+            updateMasks();
             $scope.stopSpatialization();
             sigmaInstance.kill();
           }
         }
 
-        function updateMask() {
-          sigmaInstance.graph.nodes().forEach(n => {
-            mask.nodes[n.id] = {x:n.x, y:n.y};
+        function updateMasks() {
+          [internalMask, $scope.mask].forEach(mask => {
+            sigmaInstance.graph.nodes().forEach(n => {
+              mask.nodes[n.id] = {};
+              ['x', 'y', 'size', 'color'].forEach(attr => {
+                mask.nodes[n.id][attr] = n[attr];
+              })
+            });            
           });
         }
 
-        function applyMask() {
-          sigmaInstance.graph.nodes().forEach(n => {
-            var nMask = mask.nodes[n.id]
-            if (nMask) {
-              n.x = nMask.x;
-              n.y = nMask.y;
-            }
+        function applyMasks() {
+          [internalMask, $scope.mask].forEach(mask => {
+            sigmaInstance.graph.nodes().forEach(n => {
+              let nMask = mask.nodes[n.id];
+              if (nMask) {
+                ['x', 'y', 'size', 'color'].forEach(attr => {
+                  if (nMask[attr]) { n[attr] = nMask[attr]; }
+                })
+              }
+            });
           });
         }
       }
@@ -423,6 +435,7 @@ angular.module('thisApp.directives', ['angularUtils.directives.dirPagination'])
         to: '=',
         defaultFrom: '=',
         defaultTo: '=',
+        mask: '=',
         tweetsLimit: '=',
         hashtagsMinDegree: '=',
         usersMinDegree: '=',
@@ -445,6 +458,7 @@ angular.module('thisApp.directives', ['angularUtils.directives.dirPagination'])
         })
 
         function displayFacet(from, to, tweetsLimit, hashtagsMinDegree, usersMinDegree, hashtagsLimit, usersLimit) {
+          console.log('MASK', $scope.mask);
           if (from && to){
             $scope.loading = true;
             $timeout(() => {

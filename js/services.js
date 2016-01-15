@@ -336,7 +336,8 @@ angular.module('thisApp.services', [])
               count: htData.count,
               x: Math.random(),
               y: Math.random(),
-              color: '#2E3B94',
+              color: '#AA9999',
+              // color: '#2E3B94',
               degree: htData.degree,
             });
           }
@@ -351,7 +352,8 @@ angular.module('thisApp.services', [])
                 count: uData.count,
                 x: Math.random(),
                 y: Math.random(),
-                color: '#A81A00',
+                color: '#333344',
+                // color: '#A81A00',
                 degree: uData.degree,
               });
             }
@@ -425,6 +427,8 @@ angular.module('thisApp.services', [])
         return FacetFactory.getFacet('tweetList').getData().length;
       },
     });
+
+    ns.usersOrientation = FacetFactory.newFacet('mainUsersOrientation.csv', {cached:true, dataFormat:'csv'});
 
     return ns;
   })

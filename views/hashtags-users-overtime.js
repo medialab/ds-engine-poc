@@ -36,16 +36,38 @@ angular.module('thisApp.hashtags-users-overtime', ['ngRoute'])
       }, 0);
     }
 
-    Facets.tweetsTotalDaily.retrieveData(ttdData => {
-      $scope.tweetsTotalDaily = ttdData;
-      $scope.ttdGetTime = d => d.time;
-      $scope.ttdGetVolume = d => d.count;
-      let extent = d3.extent(ttdData.map(d => d.time));
-      $scope.timeMin = extent[0];
-      $scope.timeMax = extent[1];
-      finalize();
+    Facets.usersOrientation.retrieveData(usersOrientation => {
+
+      $scope.mask = buildOrientationMask(usersOrientation);
+
+      Facets.tweetsTotalDaily.retrieveData(ttdData => {
+        $scope.tweetsTotalDaily = ttdData;
+        $scope.ttdGetTime = d => d.time;
+        $scope.ttdGetVolume = d => d.count;
+        let extent = d3.extent(ttdData.map(d => d.time));
+        $scope.timeMin = extent[0];
+        $scope.timeMax = extent[1];
+        finalize();
+      });      
     });
 
+  }
+
+  function buildOrientationMask(orientations) {
+    const colorCode = {
+      'Right-wing': "#0769D3",
+      'Left-wing': "#B92106",
+      'Media \'left-wing\'': "#B92106",
+      'Media \'right-wing\'': "#0769D3",
+      // 'Neutral': "#989251",
+    };
+    let mask = {nodes:{}};
+    orientations.forEach(o => {
+      if (colorCode[o.orientation]) {
+        mask.nodes['@'+o.user] = {color: colorCode[o.orientation]}
+      }
+    })
+    return mask;
   }
   
 });
