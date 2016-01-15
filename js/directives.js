@@ -250,6 +250,59 @@ angular.module('thisApp.directives', ['angularUtils.directives.dirPagination'])
     }
   }])
 
+  .directive('hashtagsUsersByPeriod', ['Facets', '$timeout', function (Facets, $timeout){
+    return {
+      restrict: 'E',
+      scope: {
+        from: '=',
+        to: '=',
+        defaultFrom: '=',
+        defaultTo: '=',
+        tweetsLimit: '=',
+      },
+      templateUrl: 'partials/hashtagsUsersByPeriod.html',
+      link: function($scope, el, attrs) {
+        $scope.loading = true;
+        $scope.$watchGroup(['from', 'to', 'defaultFrom', 'defaultTo'], function (newValues, oldValues, $scope) {
+          let from = newValues[0];
+          let to = newValues[1];
+          let defaultFrom = newValues[2];
+          let defaultTo = newValues[3];
+          if (from && to && from != to) {
+            displayFacet(from, to, $scope.tweetsLimit);
+          } else if (defaultFrom && defaultTo) {
+            displayFacet(defaultFrom, defaultTo, $scope.tweetsLimit);
+          }
+        })
+
+        function displayFacet(from, to, tweetsLimit) {
+          if (from && to){
+            $scope.loading = true;
+            $timeout(() => {
+              Facets.getHashtagUserNetworkForPeriod(from, to, +tweetsLimit).retrieveData(result => {
+                $scope.loading = false;
+                if (result.overLimit) {
+                  $scope.overLimit = true;
+                  $scope.tweetCount = result.tweetCount;
+                } else {
+                  $scope.overLimit = false;
+                  $scope.tweetCount = result.tweetCount;
+                  let s = new sigma({
+                    graph: result.network,
+                    container: 'sigma-container',
+                  });
+                  console.log(s)
+                }
+                $scope.$apply();
+              });
+              $scope.$apply();
+            }, 0, false);
+          }
+        }
+      },
+    }
+  }])
+
   .directive('hashtagsByPeriod', ['Facets', '$timeout', function (Facets, $timeout){
     return {
       restrict: 'E',

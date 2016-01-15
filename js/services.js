@@ -58,6 +58,7 @@ angular.module('thisApp.services', [])
             'lang',
             'location',
             'from_user_id',
+            'from_user_name',
             'from_user_realname',
           ].forEach(k => {result[k] = item[k]})
 
@@ -180,6 +181,94 @@ angular.module('thisApp.services', [])
 
       return hashtagList;
 
+    }
+
+    // Get a network of #hashtags and @users with a time span
+    ns.getHashtagUserNetworkForPeriod = function (from, to, tweetsLimit) {
+      return FacetFactory.newFacet(`hashtagUserNetwork-from-${from}-to-${to}-tlimit-${tweetsLimit}`, {
+        dependencies: ['tweetList'],
+        ephemeral: true,
+        compute: function () {
+          const tweetList = FacetFactory.getFacet('tweetList').getData().filter(item => {
+            return item.time >= from && item.time <= to;
+          });
+
+          if (tweetList.length > tweetsLimit) {
+            return {overLimit: true, tweetCount:tweetList.length};
+          }
+
+          let hashtagsIndex = {};
+          let usersIndex = {};
+          let linksIndex = {};
+          tweetList.forEach(item => {
+            // User
+            let user = '@' + item.from_user_name;
+            let uData = usersIndex[user] || {count: 0};
+            uData.count++;
+            usersIndex[user] = uData;
+            // Extract hashtags
+            let hashtags = item.text.match(/[#]+[A-Za-z0-9-_]+/g) || [];
+            hashtags.forEach(ht_ => {
+              // Hashtag
+              let ht = '#' + ht_;
+              let htData = hashtagsIndex[ht] || {count: 0};
+              htData.count++;
+              hashtagsIndex[ht] = htData;
+              // Link
+              let link = user + ' ' + ht;
+              let lData = linksIndex[link] || {count: 0};
+              lData.count++;
+              linksIndex[link] = lData;
+            });
+          });
+
+          // TODO: Filter the network
+
+          let nodeList = [];
+          for (let ht in hashtagsIndex) {
+            let htData = hashtagsIndex[ht];
+            nodeList.push({
+              id: ht,
+              label: ht,
+              type: 'hashtag',
+              size: Math.sqrt(1+htData.count),
+              count: htData.count,
+              x: Math.random(),
+              y: Math.random(),
+              color: '#FF9',
+            });
+          }
+          for (let user in usersIndex) {
+            let uData = usersIndex[user];
+            nodeList.push({
+              id: user,
+              label: user,
+              type: 'user',
+              size: Math.sqrt(1+uData.count),
+              count: uData.count,
+              x: Math.random(),
+              y: Math.random(),
+              color: '#9FF',
+            });
+          }
+          let edgeList = [];
+          let count = 0;
+          for (let l in linksIndex) {
+            let lData = linksIndex[l];
+            let splt = l.split(' ');
+            let source = splt[0];
+            let target = splt[1];
+            edgeList.push({
+              id: 'e' + count++,
+              source: source,
+              target: target,
+              count: lData.count,
+            });
+          }
+
+          return {network: {nodes: nodeList, edges: edgeList}};
+        }
+      });
     }
 
     // Total tweet count over time

@@ -1,0 +1,18 @@
+<div ng-if="loading">LOADING...</div>
+<div ng-show="!loading">
+  <div ng-show="overLimit">
+     TOO MANY TWEETS ({{tweetCount|number}}) - Please select a time span with less than {{tweetsLimit|number}}.
+  </div>
+  <div ng-show="!overLimit">
+    <div>
+      <p class="text-muted">Hashtags and Users from {{tweetCount|number}} tweets</p>
+    </div>
+    <style type="text/css">
+      #sigma-container {
+        width: 960px;
+        height: 300px;
+      }
+    </style>
+    <div id="sigma-container"></div>
+  </div>
+</div>

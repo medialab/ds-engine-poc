@@ -11,6 +11,7 @@ angular.module('thisApp', [
   'thisApp.filters',
   'thisApp.home',
   'thisApp.hashtags-overtime',
+  'thisApp.hashtags-users-overtime',
 ]).
 config(['$routeProvider', function($routeProvider) {
   $routeProvider.otherwise({redirectTo: '/'});
