@@ -8,6 +8,8 @@ angular.module('thisApp.services', [])
   .factory('Facets', function () {
     // Namespace
     let ns = {};
+    
+    Facettage.debug = true;
 
     // Below we declare a series of facets we use in this project
 
@@ -16,9 +18,8 @@ angular.module('thisApp.services', [])
 
     // The clean and rich list of tweets
     ns.tweetList = Facettage.newFacet('tweetList', {
-      cached: true,
+      // cached: true,
       dependencies:['tweets.csv'],
-      // Optional, because implicit, but it is clearer to specify it
       type: 'csv',
       compute: function(){
         let tweets_csvData = Facettage.getFacet('tweets.csv').getData();
@@ -378,7 +379,7 @@ angular.module('thisApp.services', [])
 
     // Total tweet count over time
     ns.tweetsTotalDaily = Facettage.newFacet('tweetsTotalDaily', {
-      cached: true,
+      // cached: true,
       dependencies: ['tweetList'],
       compute: function(){
         let tweetList = Facettage.getFacet('tweetList').getData();
@@ -425,8 +426,6 @@ angular.module('thisApp.services', [])
         return Facettage.getFacet('tweetList').getData().length;
       },
     });
-
-    ns.usersOrientation = Facettage.newFacet('mainUsersOrientation.csv', {cached:true, type:'csv'});
 
     return ns;
   })

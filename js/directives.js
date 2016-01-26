@@ -23,7 +23,7 @@ angular.module('thisApp.directives', ['angularUtils.directives.dirPagination'])
     }
   }])
 
-  // A simple curve
+  // A simple curve that can be synchronized to a brush
   .directive('dailyCount', ['$timeout', function ($timeout) {
     return {
       restrict: 'E',
@@ -127,7 +127,8 @@ angular.module('thisApp.directives', ['angularUtils.directives.dirPagination'])
       },
     }
   }])
-
+  
+  // A curve with a brush
   .directive('dailyCountBrushable', ['$timeout', function ($timeout) {
     return {
       restrict: 'E',
@@ -423,6 +424,7 @@ angular.module('thisApp.directives', ['angularUtils.directives.dirPagination'])
             });
           });
         }
+
       }
     }
   }])
