@@ -40,12 +40,12 @@ angular.module('thisApp.hashtags-overtime', ['ngRoute'])
       $scope.tweetsTotalDaily = ttdData;
       $scope.ttdGetTime = d => d.time;
       $scope.ttdGetVolume = d => d.count;
-      let extent = d3.extent(ttdData.map(d => d.time));
+      var extent = d3.extent(ttdData.map(d => d.time));
       $scope.timeMin = extent[0];
       $scope.timeMax = extent[1];
       finalize();
     });
-    // let htTimeFacet = Facets.getHashtagListForPeriod(1435733150000, 1435736100000);
+    // var htTimeFacet = Facets.getHashtagListForPeriod(1435733150000, 1435736100000);
     // htTimeFacet.retrieveData(function(d){
     //   console.log('hashtagList', d.filter((x, i) => {return i < 10;}) );
     //   console.log('tweetList', Facets.tweetList.getData().filter((x, i) => {return i < 10;}) );

@@ -35,7 +35,7 @@ angular.module('thisApp.directives', ['angularUtils.directives.dirPagination'])
         to: '=',
       },
       link: function($scope, el, attrs) {
-        let elId = el.attr('id')
+        var elId = el.attr('id')
         if (!elId) {console.log('Element id missing -> causes issues')};
 
         el.html('<div class="simple-curve">Loading...</div>');
@@ -44,9 +44,9 @@ angular.module('thisApp.directives', ['angularUtils.directives.dirPagination'])
           if ($scope.data !== undefined){
             $timeout(() => {
 
-              let data = $scope.data;
-              let getTime = $scope.timeAccessor;
-              let getVolume = $scope.volumeAccessor;
+              var data = $scope.data;
+              var getTime = $scope.timeAccessor;
+              var getVolume = $scope.volumeAccessor;
               $(`#${elId} .simple-curve`).html('');
 
               var margin = {top: 10, right: 40, bottom: 30, left: 40},
@@ -108,10 +108,11 @@ angular.module('thisApp.directives', ['angularUtils.directives.dirPagination'])
 
               // Listen to angular
               $scope.$watchGroup(['from', 'to'], function(newValues, oldValues, scope) {
-                let from = newValues[0];
-                let to = newValues[1];
+                var from = newValues[0];
+                var to = newValues[1];
+                var extent;
                 if (from && to) {
-                  let extent = [new Date(from), new Date(to)];
+                  extent = [new Date(from), new Date(to)];
                   updateBrush(extent);
                 }
               })
@@ -140,7 +141,7 @@ angular.module('thisApp.directives', ['angularUtils.directives.dirPagination'])
         to: '=',
       },
       link: function($scope, el, attrs) {
-        let elId = el.attr('id')
+        var elId = el.attr('id')
         if (!elId) {console.log('Element id missing -> causes issues')};
 
         el.html('<div class="brush-curve">Loading...</div>');
@@ -149,9 +150,9 @@ angular.module('thisApp.directives', ['angularUtils.directives.dirPagination'])
           if ($scope.data !== undefined){
             $timeout(() => {
 
-              let data = $scope.data;
-              let getTime = $scope.timeAccessor;
-              let getVolume = $scope.volumeAccessor;
+              var data = $scope.data;
+              var getTime = $scope.timeAccessor;
+              var getVolume = $scope.volumeAccessor;
               $(`#${elId} .brush-curve`).html('');
 
               var margin = {top: 10, right: 40, bottom: 20, left: 40},
@@ -220,17 +221,18 @@ angular.module('thisApp.directives', ['angularUtils.directives.dirPagination'])
 
               // Listen to angular
               $scope.$watchGroup(['from', 'to'], function(newValues, oldValues, scope) {
-                let from = newValues[0];
-                let to = newValues[1];
+                var from = newValues[0];
+                var to = newValues[1];
+                var extent;
                 if (from && to) {
-                  let extent = [new Date(from), new Date(to)];
+                  extent = [new Date(from), new Date(to)];
                   brush.extent(extent);
                   svg.select(".brush").call(brush);
                 }
               })
 
               function brushed() {
-                let extent = brush.extent();
+                var extent = brush.extent();
                 $scope.from = extent[0].getTime();
                 $scope.to = extent[1].getTime();
                 $scope.$apply();
@@ -267,13 +269,13 @@ angular.module('thisApp.directives', ['angularUtils.directives.dirPagination'])
       templateUrl: 'partials/sigmaNetwork.html',
       link: function($scope, el, attrs) {
         $scope.pending = true;
-        let sigmaInstance;
-        let internalMask = {
+        var sigmaInstance;
+        var internalMask = {
           nodes: {},
         };
 
         $scope.$watchGroup(['network', 'mask'], function (newValues, oldValues, $scope) {
-          let network = newValues[0];
+          var network = newValues[0];
           if (!$scope.mask) {
             $scope.mask = {nodes:{}};
           }
@@ -293,7 +295,7 @@ angular.module('thisApp.directives', ['angularUtils.directives.dirPagination'])
         });
 
         $scope.sigmaRecenter = function  (){
-          let c = sigmaInstance.cameras[0];
+          var c = sigmaInstance.cameras[0];
           c.goTo({
             ratio: 1,
             x: 0,
@@ -302,14 +304,14 @@ angular.module('thisApp.directives', ['angularUtils.directives.dirPagination'])
         }
 
         $scope.sigmaZoom = function () {
-          let c = sigmaInstance.cameras[0];
+          var c = sigmaInstance.cameras[0];
           c.goTo({
             ratio: c.ratio / c.settings('zoomingRatio')
           });
         }
 
         $scope.sigmaUnzoom = function () {
-          let c = sigmaInstance.cameras[0];
+          var c = sigmaInstance.cameras[0];
           c.goTo({
             ratio: c.ratio * c.settings('zoomingRatio')
           })
@@ -415,7 +417,7 @@ angular.module('thisApp.directives', ['angularUtils.directives.dirPagination'])
         function applyMasks() {
           [internalMask, $scope.mask].forEach(mask => {
             sigmaInstance.graph.nodes().forEach(n => {
-              let nMask = mask.nodes[n.id];
+              var nMask = mask.nodes[n.id];
               if (nMask) {
                 ['x', 'y', 'size', 'color'].forEach(attr => {
                   if (nMask[attr]) { n[attr] = nMask[attr]; }
@@ -448,10 +450,10 @@ angular.module('thisApp.directives', ['angularUtils.directives.dirPagination'])
       link: function($scope, el, attrs) {
         $scope.loading = true;
         $scope.$watchGroup(['from', 'to', 'defaultFrom', 'defaultTo'], function (newValues, oldValues, $scope) {
-          let from = newValues[0];
-          let to = newValues[1];
-          let defaultFrom = newValues[2];
-          let defaultTo = newValues[3];
+          var from = newValues[0];
+          var to = newValues[1];
+          var defaultFrom = newValues[2];
+          var defaultTo = newValues[3];
           if (from && to && from != to) {
             displayFacet(from, to, $scope.tweetsLimit, $scope.hashtagsMinDegree, $scope.usersMinDegree, $scope.hashtagsLimit, $scope.usersLimit);
           } else if (defaultFrom && defaultTo) {
@@ -497,10 +499,10 @@ angular.module('thisApp.directives', ['angularUtils.directives.dirPagination'])
       link: function($scope, el, attrs) {
         $scope.loading = true;
         $scope.$watchGroup(['from', 'to', 'defaultFrom', 'defaultTo'], function (newValues, oldValues, $scope) {
-          let from = newValues[0];
-          let to = newValues[1];
-          let defaultFrom = newValues[2];
-          let defaultTo = newValues[3];
+          var from = newValues[0];
+          var to = newValues[1];
+          var defaultFrom = newValues[2];
+          var defaultTo = newValues[3];
           if (from && to && from != to) {
             displayFacet(from, to);
           } else if (defaultFrom && defaultTo) {

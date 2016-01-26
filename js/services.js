@@ -7,7 +7,7 @@ angular.module('thisApp.services', [])
   // Facets declaration
   .factory('Facets', function () {
     // Namespace
-    let ns = {};
+    var ns = {};
     
     Facettage.debug = true;
 
@@ -22,9 +22,9 @@ angular.module('thisApp.services', [])
       dependencies:['tweets.csv'],
       type: 'csv',
       compute: function(){
-        let tweets_csvData = Facettage.getFacet('tweets.csv').getData();
-        let data = [...tweets_csvData].map(item => {
-          let result = {};
+        var tweets_csvData = Facettage.getFacet('tweets.csv').getData();
+        var data = [...tweets_csvData].map(item => {
+          var result = {};
           // Time: we use the # of millisecond, javascript style
           result.time = (new Date(item.time * 1000)).getTime();
           result.from_user_created_at = (new Date(item.from_user_created_at)).getTime();
@@ -45,7 +45,7 @@ angular.module('thisApp.services', [])
           // result.mentions = item.text.match(/[@]+[A-Za-z0-9-_]+/g) || [];
 
           // // Extract words
-          // let text = item.text;
+          // var text = item.text;
           // result.hashtags.forEach(d => text = text.replace(d, d.substr(1,d.length)) );
           // result.mentions.forEach(d => text = text.replace(d, d.substr(1,d.length)) );
           // result.words = text.split(/\W+/);
@@ -119,7 +119,7 @@ angular.module('thisApp.services', [])
 
     // A processing function factored for hashtag related facets
     ns.extractHashtagsFromTweetList = function (tweetList_, opts) {
-      let tweetList;
+      var tweetList;
       if (opts.all) {
         tweetList = tweetList_;
       } else {
@@ -128,12 +128,12 @@ angular.module('thisApp.services', [])
         })
       }
 
-      let hashtagsIndex = {};
+      var hashtagsIndex = {};
       tweetList.forEach(item => {
         // Extract hashtags
-        let hashtags = item.text.match(/[#]+[A-Za-z0-9-_]+/g) || [];
+        var hashtags = item.text.match(/[#]+[A-Za-z0-9-_]+/g) || [];
         hashtags.forEach(ht => {
-          let htData = hashtagsIndex[ht] || {tweetIdList:[], temp:{dates:[], rtCounts:[], favCounts:[]}};
+          var htData = hashtagsIndex[ht] || {tweetIdList:[], temp:{dates:[], rtCounts:[], favCounts:[]}};
           htData.tweetIdList.push(item.id);
           // We get time as a number because of statistical operations (see below)
           htData.temp.dates.push(item.time);
@@ -144,8 +144,9 @@ angular.module('thisApp.services', [])
       });
 
       // Compute metadata
-      for (let ht in hashtagsIndex) {
-        let htData = hashtagsIndex[ht];
+      var ht;
+      for (ht in hashtagsIndex) {
+        var htData = hashtagsIndex[ht];
         // Dates
         htData.temp.dates.sort();
         htData.dateFirst = htData.temp.dates[0];
@@ -171,9 +172,10 @@ angular.module('thisApp.services', [])
         hashtagsIndex[ht] = htData;
       }
 
-      let hashtagList = [];
-      for (let ht in hashtagsIndex) {
-        let htData = hashtagsIndex[ht];
+      var hashtagList = [];
+      var ht;
+      for (ht in hashtagsIndex) {
+        var htData = hashtagsIndex[ht];
         htData.text = ht;
         hashtagList.push(htData);
       }
@@ -200,25 +202,25 @@ angular.module('thisApp.services', [])
             return {overLimit: true, tweetCount:tweetList.length};
           }
 
-          let hashtagsIndex = {};
-          let usersIndex = {};
-          let linksIndex = {};
+          var hashtagsIndex = {};
+          var usersIndex = {};
+          var linksIndex = {};
           tweetList.forEach(item => {
             // User
-            let user = '@' + item.from_user_name;
-            let uData = usersIndex[user] || {count: 0, degree:0};
+            var user = '@' + item.from_user_name;
+            var uData = usersIndex[user] || {count: 0, degree:0};
             uData.count++;
             usersIndex[user] = uData;
             // Extract hashtags
-            let hashtags = item.text.match(/[#]+[A-Za-z0-9-_]+/g) || [];
+            var hashtags = item.text.match(/[#]+[A-Za-z0-9-_]+/g) || [];
             hashtags.forEach(ht => {
               // Hashtag
-              let htData = hashtagsIndex[ht] || {count: 0, degree:0};
+              var htData = hashtagsIndex[ht] || {count: 0, degree:0};
               htData.count++;
               hashtagsIndex[ht] = htData;
               // Link
-              let link = user + ' ' + ht;
-              let lData = linksIndex[link] || {count: 0};
+              var link = user + ' ' + ht;
+              var lData = linksIndex[link] || {count: 0};
               lData.count++;
               linksIndex[link] = lData;
               // Degrees: if lData === 1 then the link was just created
@@ -230,9 +232,10 @@ angular.module('thisApp.services', [])
           });
 
           // Filter nodes 1/2: filter by degree limit
-          let keepNodes = {};
-          for (let ht in hashtagsIndex) {
-            let htData = hashtagsIndex[ht];
+          var keepNodes = {};
+          var ht;
+          for (ht in hashtagsIndex) {
+            var htData = hashtagsIndex[ht];
             if (htData.degree >= hashtagsMinDegree) {
               htData.keep = true;
               keepNodes[ht] = true;
@@ -240,8 +243,9 @@ angular.module('thisApp.services', [])
               htData.keep = false;
             }
           }
-          for (let user in usersIndex) {
-            let uData = usersIndex[user];
+          var user;
+          for (user in usersIndex) {
+            var uData = usersIndex[user];
             if (uData.degree >= usersMinDegree) {
               uData.keep = true;
               keepNodes[user] = true;
@@ -249,34 +253,35 @@ angular.module('thisApp.services', [])
               uData.keep = false;
             }
           }
-          for (let l in linksIndex) {
-            let lData = linksIndex[l];
-            let splt = l.split(' ');
-            let source = splt[0];
-            let target = splt[1];
+          var l;
+          for (l in linksIndex) {
+            var lData = linksIndex[l];
+            var splt = l.split(' ');
+            var source = splt[0];
+            var target = splt[1];
             if (!(keepNodes[source] && keepNodes[target])) {
               delete linksIndex[l];
             }
           }
-          for (let ht in hashtagsIndex) {
-            let htData = hashtagsIndex[ht];
+          for (ht in hashtagsIndex) {
+            var htData = hashtagsIndex[ht];
             if (!htData.keep) {delete hashtagsIndex[ht]}
           }
-          for (let user in usersIndex) {
-            let uData = usersIndex[user];
+          for (user in usersIndex) {
+            var uData = usersIndex[user];
             if (!uData.keep) {delete usersIndex[user]}
           }
 
           // Filter nodes 2/2: limit by count
-          let hashtagsAsList = [];
-          for (let ht in hashtagsIndex) {
-            let htData = hashtagsIndex[ht];
+          var hashtagsAsList = [];
+          for (ht in hashtagsIndex) {
+            var htData = hashtagsIndex[ht];
             htData.id = ht;
             hashtagsAsList.push(htData);
           }
-          let usersAsList = [];
-          for (let user in usersIndex) {
-            let uData = usersIndex[user];
+          var usersAsList = [];
+          for (user in usersIndex) {
+            var uData = usersIndex[user];
             uData.id = user;
             usersAsList.push(uData);
           }
@@ -305,28 +310,28 @@ angular.module('thisApp.services', [])
                 usersIndex[uData.id].keep = false;
               }
             })
-          for (let l in linksIndex) {
-            let lData = linksIndex[l];
-            let splt = l.split(' ');
-            let source = splt[0];
-            let target = splt[1];
+          for (l in linksIndex) {
+            var lData = linksIndex[l];
+            var splt = l.split(' ');
+            var source = splt[0];
+            var target = splt[1];
             if (!(keepNodes[source] && keepNodes[target])) {
               delete linksIndex[l];
             }
           }
-          for (let ht in hashtagsIndex) {
-            let htData = hashtagsIndex[ht];
+          for (ht in hashtagsIndex) {
+            var htData = hashtagsIndex[ht];
             if (!htData.keep) {delete hashtagsIndex[ht]}
           }
-          for (let user in usersIndex) {
-            let uData = usersIndex[user];
+          for (user in usersIndex) {
+            var uData = usersIndex[user];
             if (!uData.keep) {delete usersIndex[user]}
           }
 
 
-          let nodeList = [];
-          for (let ht in hashtagsIndex) {
-            let htData = hashtagsIndex[ht];
+          var nodeList = [];
+          for (ht in hashtagsIndex) {
+            var htData = hashtagsIndex[ht];
             nodeList.push({
               id: ht,
               label: ht,
@@ -340,8 +345,8 @@ angular.module('thisApp.services', [])
               degree: htData.degree,
             });
           }
-          for (let user in usersIndex) {
-            let uData = usersIndex[user];
+          for (user in usersIndex) {
+            var uData = usersIndex[user];
             if (uData.keep) {
               nodeList.push({
                 id: user,
@@ -357,13 +362,13 @@ angular.module('thisApp.services', [])
               });
             }
           }
-          let edgeList = [];
-          let count = 0;
-          for (let l in linksIndex) {
-            let lData = linksIndex[l];
-            let splt = l.split(' ');
-            let source = splt[0];
-            let target = splt[1];
+          var edgeList = [];
+          var count = 0;
+          for (l in linksIndex) {
+            var lData = linksIndex[l];
+            var splt = l.split(' ');
+            var source = splt[0];
+            var target = splt[1];
             edgeList.push({
               id: 'e' + count++,
               source: source,
@@ -382,19 +387,21 @@ angular.module('thisApp.services', [])
       // cached: true,
       dependencies: ['tweetList'],
       compute: function(){
-        let tweetList = Facettage.getFacet('tweetList').getData();
-        let dateIndex = {};
+        var tweetList = Facettage.getFacet('tweetList').getData();
+        var dateIndex = {};
 
         tweetList.some(item => {
-          let dateAsTime = getJustTheDate(item.time).getTime();
-          let dateData = dateIndex[dateAsTime] || {count:0, dateString:(new Date(dateAsTime)).toDateString()};
+          var dateAsTime = getJustTheDate(item.time).getTime();
+          var dateData = dateIndex[dateAsTime] || {count:0, dateString:(new Date(dateAsTime)).toDateString()};
           dateData.count++;
           dateIndex[dateAsTime] = dateData;
         });
 
-        let list = [];
-        for (let dateAsTime in dateIndex) {
-          let dateData = dateIndex[dateAsTime];
+        var list = [];
+        var dateAsTime;
+        var dateData;
+        for (dateAsTime in dateIndex) {
+          dateData = dateIndex[dateAsTime];
           dateData.time = dateAsTime;
           list.push(dateData);
         }

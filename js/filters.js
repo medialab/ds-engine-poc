@@ -13,10 +13,10 @@ angular.module('thisApp.filters', [])
   .filter('dateCompact', [function() {
     return function(timestamp) {
       if ( timestamp ) {
-        let date = (new Date(timestamp));
-        let day = date.getDate();
-        let month = date.getMonth() + 1;
-        let year = date.getFullYear();
+        var date = (new Date(timestamp));
+        var day = date.getDate();
+        var month = date.getMonth() + 1;
+        var year = date.getFullYear();
         return `${day}-${month}-${year}`;
       } else {
         return '';

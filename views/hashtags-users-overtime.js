@@ -40,7 +40,7 @@ angular.module('thisApp.hashtags-users-overtime', ['ngRoute'])
       $scope.tweetsTotalDaily = ttdData;
       $scope.ttdGetTime = d => d.time;
       $scope.ttdGetVolume = d => d.count;
-      let extent = d3.extent(ttdData.map(d => d.time));
+      var extent = d3.extent(ttdData.map(d => d.time));
       $scope.timeMin = extent[0];
       $scope.timeMax = extent[1];
       finalize();
