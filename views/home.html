@@ -1,33 +1,9 @@
-<navbar/>
-
-<div class="container-fluid" ng-show="loading">
+<div ng-show="loading">
   <spinner text="LOADING"/>
 </div>
 
-<div class="container-fluid" ng-show="!loading">
-  
-  <div class="row">
-
-    <div class="col-md-12">
-      <div class="page-header">
-
-        <h1>Dutch Refugee Crisis on Twitter</h1>
-        
-      </div>
-    </div>
-
-  </div>
-
-  <div class="row">
-    <div class="col-md-12">
-      <a href="#/hashtags-overtime">Hashtags over time</a>
-      <br>
-      <a href="#/hashtags-users-overtime">Hashtags x Users over time (Network)</a>
-    </div>
-  </div>
-
-
-  <footer>
-    
-  </footer>
-</div> <!-- /container -->
+<div ng-show="!loading" layout-padding>
+  <h1>TWITTER DATASCAPE</h1>
+  <md-button class="md-raised" ng-href="#/hashtags-overtime" target="_blank">Hashtags over time</md-button>
+  <md-button class="md-raised" ng-href="#/hashtags-users-overtime" target="_blank">Hashtags x Users over time (Network)</md-button>
+</div>

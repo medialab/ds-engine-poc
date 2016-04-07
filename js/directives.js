@@ -3,13 +3,6 @@
 /* Services */
 
 angular.module('thisApp.directives', [])
-  
-  .directive('navbar', [function(){
-    return {
-      restrict: 'E'
-    , templateUrl: 'partials/navbar.html'
-    }
-  }])
 
   .directive('ngPressEnter', [function () {
     return function (scope, element, attrs) {
