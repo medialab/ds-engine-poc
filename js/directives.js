@@ -2,7 +2,7 @@
 
 /* Services */
 
-angular.module('thisApp.directives', ['angularUtils.directives.dirPagination'])
+angular.module('thisApp.directives', [])
   
   .directive('navbar', [function(){
     return {

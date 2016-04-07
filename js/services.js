@@ -39,7 +39,7 @@ angular.module('thisApp.services', [])
           result.from_user_listed = parseInt(item.from_user_listed, 10);
 
           // Extract hashtags
-          // result.hashtags = item.text.match(/[#]+[A-Za-z0-9-_]+/g) || [];
+          result.hashtags = (item.text.match(/[#]+[A-Za-z0-9-_]+/g) || []).join(',');
 
           // // Extract mentions
           // result.mentions = item.text.match(/[@]+[A-Za-z0-9-_]+/g) || [];
@@ -107,9 +107,10 @@ angular.module('thisApp.services', [])
 
     // Get a list of #hashtags with a time span
     ns.getHashtagListForPeriod = function (from, to) {
-      return Facettage.newFacet(`hashtagList-from-${from}-to-${to}`, {
+      return Facettage.requireFacet(`hashtagList-from-${from}-to-${to}`, {
         dependencies: ['tweetList'],
         ephemeral: true,
+        uncacheable: true,
         compute: function () {
           const tweetList = Facettage.getFacet('tweetList').getData();
           return ns.extractHashtagsFromTweetList(tweetList, {all:false, from:from, to:to});
