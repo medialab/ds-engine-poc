@@ -5,7 +5,11 @@
    ========================================================================== */
 
 md-virtual-repeat-container {
-  border: solid 1px grey;
+  border: solid 1px #CCC;
+}
+
+md-whiteframe {
+  background-color: #FFF;
 }
 
 #hashtags-by-period-list-container {
@@ -19,6 +23,10 @@ md-virtual-repeat-container {
   padding-top: 10px;
 }
 
+.layout-spacer {
+  min-height: 6px;
+  min-width: 6px;
+}
 
 
 /* Particles spinner */

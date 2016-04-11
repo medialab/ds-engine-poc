@@ -2,34 +2,42 @@
   <spinner text="LOADING"/>
 </div>
 
-<div layout="column" ng-show="!loading" layout-padding>
+<div layout="column" ng-show="!loading">
   
-  <h1>Hashtags over time</h1>
-
-  <h3>Select a time interval:</h3>
-  <div>
-    <daily-count-brushable
-      id="BRUSH"
-      data="tweetsTotalDaily"
-      time-accessor="ttdGetTime"
-      volume-accessor="ttdGetVolume"
-      from="startTime"
-      to="endTime"
-    />
+  <div layout-padding>
+    <h1>Hashtags over time</h1>
   </div>
-  <center>
-    <strong>Tweet volume over time</strong>
-    <span ng-show="startTime"> - Selection: from {{startTime|date}} to {{endTime|date}}</span>
-  </center>
 
-  <h3>Hashtags over this period</h3>
-  <hashtags-by-period
-    from="startTime_slowUpdate"
-    to="endTime_slowUpdate"
-    default-from="timeMin"
-    default-to="timeMax"
-    min-count="5"
-  />
+  <md-whiteframe class="md-whiteframe-1dp" layout-padding>
+    <div>
+      <daily-count-brushable
+        id="BRUSH"
+        data="tweetsTotalDaily"
+        time-accessor="ttdGetTime"
+        volume-accessor="ttdGetVolume"
+        from="startTime"
+        to="endTime"
+      ></daily-count-brushable>
+    </div>
+    <center>
+      <strong>Tweet volume over time</strong>
+      <span ng-show="startTime && startTime !== endTime"> - Selection: from {{startTime|date}} to {{endTime|date}}</span>
+      <span ng-show="!(startTime && startTime !== endTime)"> - Select a period</span>
+    </center>
+  </md-whiteframe>
+  
+  <div layout-padding>
+    <h3>Hashtags over {{startTime && startTime !== endTime ? 'this' : 'the whole'}} period</h3>
+    <div>
+      <hashtags-by-period
+        from="startTime_slowUpdate"
+        to="endTime_slowUpdate"
+        default-from="timeMin"
+        default-to="timeMax"
+        min-count="5"
+      ></hashtags-by-period>
+    </div>
+  </div>
 
   <footer>
   </footer>
