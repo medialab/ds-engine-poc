@@ -1,5 +1,5 @@
-<div class="row hashtag-line">
-  <div class="col-md-4">
+<div layout="row" class="hashtag-line">
+  <div flex="35">
     <table>
       <tr>
         <td class="text-info hashtag-line-number">
@@ -11,13 +11,13 @@
       </tr>
     </table>
   </div>
-  <div class="col-md-4 center">
+  <div flex="35" class="center">
     {{item.dateFirst|dateCompact}} / {{item.dateMedian|dateCompact}} / {{item.dateLast|dateCompact}}
   </div>
-  <div class="col-md-2 center">
+  <div flex="15" class="center">
     {{item.favorite_countMean|number}} / {{item.favorite_countMax|number}}
   </div>
-  <div class="col-md-2 center">
+  <div flex="15" class="center">
     {{item.retweet_countMean|number}} / {{item.retweet_countMax|number}}
   </div>
 </div>

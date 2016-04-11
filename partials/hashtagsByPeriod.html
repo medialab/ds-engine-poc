@@ -3,35 +3,41 @@
   <div>
     <p class="text-muted">Displaying only hashtags with {{minCount}}+ tweets over the period - {{list.length}} hashtags</p>
   </div>
-  <div class="row">
-  <div class="col-md-4">
-    <table>
-      <tr>
-        <td class="text-muted hashtag-line-number">
-          tweets
-        </td>
-        <td class="text-muted">
-          hashtag
-        </td>
-      </tr>
-    </table>
+  <div layout="row" style="overflow-y: scroll;">
+    <div flex="35">
+      <table>
+        <tr>
+          <td class="text-muted hashtag-line-number">
+            tweets
+          </td>
+          <td class="text-muted">
+            hashtag
+          </td>
+        </tr>
+      </table>
+    </div>
+    <div flex="35" class="text-muted center">
+      <strong>Date</strong> first / median / last
+    </div>
+    <div flex="15" class="text-muted center">
+      <strong>Favorite</strong> mean / max
+    </div>
+    <div flex="15" class="text-muted center">
+      <strong>RT</strong> mean / max
+    </div>
   </div>
-  <div class="col-md-4 text-muted center">
-    <strong>Date</strong> first / median / last
+  
+  <md-virtual-repeat-container id="hashtags-by-period-list-container">
+    <div md-virtual-repeat="item in list | orderBy:'-tweetCount'" flex>
+      <hashtag-line item="item"/>
+    </md-virtual-repeat-container>
   </div>
-  <div class="col-md-2 text-muted center">
-    <strong>Favorite</strong> mean / max
-  </div>
-  <div class="col-md-2 text-muted center">
-    <strong>RT</strong> mean / max
-  </div>
-</div>
-  <div dir-paginate="item in list | orderBy:'-tweetCount' | itemsPerPage: 10">
+<!--   <div dir-paginate="item in list | orderBy:'-tweetCount' | itemsPerPage: 10">
     <hashtag-line item="item"/>
-  </div>
-  <dir-pagination-controls
+  </div> -->
+  <!-- <dir-pagination-controls
     boundary-links="true"
     on-page-change="pageChangeHandler(newPageNumber)"
     template-url="partials/dirPagination.tpl.html"
-  ></dir-pagination-controls>
+  ></dir-pagination-controls> -->
 </div>

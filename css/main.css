@@ -4,6 +4,23 @@
    Author's custom styles
    ========================================================================== */
 
+md-virtual-repeat-container {
+  border: solid 1px grey;
+}
+
+#hashtags-by-period-list-container {
+  height: 292px;
+  width: 100%;
+}
+.hashtag-line {
+  border-bottom: 1px solid #ddd;
+  box-sizing: border-box;
+  height: 40px;
+  padding-top: 10px;
+}
+
+
+
 /* Particles spinner */
 #pjs-container {
   position: absolute;
