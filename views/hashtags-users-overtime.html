@@ -1,70 +1,50 @@
-<navbar/>
-
-<div class="container-fluid" ng-show="loading">
+<div ng-show="loading">
   <spinner text="LOADING"/>
 </div>
 
-<div class="container-fluid" ng-show="!loading">
+<div layout="column" ng-show="!loading" layout-padding>
   
-  <div class="row">
+  <h1>Hashtags x users over time</h1>
 
-    <div class="col-md-12">
-      <div class="page-header">
-        <h1>Hashtags x users over time</h1>
-      </div>
-    </div>
-
+  <h3>Select a time interval:</h3>
+  <div>
+    <daily-count-brushable
+      id="BRUSH"
+      data="tweetsTotalDaily"
+      time-accessor="ttdGetTime"
+      volume-accessor="ttdGetVolume"
+      from="startTime"
+      to="endTime"
+    />
   </div>
+  <center>
+    <strong>Tweet volume over time</strong>
+    <span ng-show="startTime"> - Selection: from {{startTime|date}} to {{endTime|date}}</span>
+  </center>
 
-  <div class="row">
-    <div class="col-md-12">
-      <div class="viz-card">
-        <h3>Select a time interval:</h3>
-        <div>
-          <daily-count-brushable
-            id="BRUSH"
-            data="tweetsTotalDaily"
-            time-accessor="ttdGetTime"
-            volume-accessor="ttdGetVolume"
-            from="startTime"
-            to="endTime"
-          />
-        </div>
-        <center>
-          <strong>Tweet volume over time</strong>
-          <span ng-show="startTime"> - Selection: from {{startTime|date}} to {{endTime|date}}</span>
-        </center>
-      </div>
-
-      <div class="viz-card-spacer"></div>
-
-      <div class="viz-card">
-        <h3>Hashtags x users over this period</h3>
-        <div>
-          <hashtags-users-by-period
-            from="startTime_slowUpdate"
-            to="endTime_slowUpdate"
-            default-from="timeMin"
-            default-to="timeMax"
-            mask="mask"
-            tweets-limit="500000"
-            hashtags-min-degree="3"
-            hashtags-limit="200"
-            users-min-degree="3"
-            users-limit="200"
-          />
-        </div>
-        <br>
-        <div>
-          <table>
-            <tr>
-              <td class="key-cell"><span class="dot" style="background-color: #9999AA;"></span>&nbsp;#Hashtag</td>
-              <td class="key-cell"><span class="dot" style="background-color: #443333;"></span>&nbsp;@User</td>
-            </tr>
-          </table>
-        </div>
-      </div>
-    </div>
+  <h3>Hashtags x users over this period</h3>
+  <div>
+    <hashtags-users-by-period
+      from="startTime_slowUpdate"
+      to="endTime_slowUpdate"
+      default-from="timeMin"
+      default-to="timeMax"
+      mask="mask"
+      tweets-limit="500000"
+      hashtags-min-degree="3"
+      hashtags-limit="200"
+      users-min-degree="3"
+      users-limit="200"
+    />
+  </div>
+  <br>
+  <div>
+    <table>
+      <tr>
+        <td class="key-cell"><span class="dot" style="background-color: #9999AA;"></span>&nbsp;#Hashtag</td>
+        <td class="key-cell"><span class="dot" style="background-color: #443333;"></span>&nbsp;@User</td>
+      </tr>
+    </table>
   </div>
 
   <footer>
