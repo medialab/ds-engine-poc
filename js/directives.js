@@ -267,6 +267,8 @@ angular.module('thisApp.directives', [])
           nodes: {},
         };
 
+        $scope.spatializationRunning = true;
+
         $scope.$watchGroup(['network', 'mask'], function (newValues, oldValues, $scope) {
           var network = newValues[0];
           if (!$scope.mask) {
