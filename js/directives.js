@@ -553,7 +553,7 @@ angular.module('thisApp.directives', [])
     return {
       restrict: 'A',
       scope: {
-        text: '=',
+        text: '@',
       },
       templateUrl: 'partials/arianeLine.html',
     }

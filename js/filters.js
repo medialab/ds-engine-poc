@@ -6,18 +6,18 @@ angular.module('thisApp.filters', [])
   
   .filter('date', [function() {
     return function(timestamp) {
-      return timestamp ? (new Date(timestamp)).toDateString() : '?';
+      return timestamp ? (new Date(+timestamp)).toDateString() : '?';
     }
   }])
 
   .filter('dateCompact', [function() {
     return function(timestamp) {
       if ( timestamp ) {
-        var date = (new Date(timestamp));
+        var date = (new Date(+timestamp));
         var day = date.getDate();
         var month = date.getMonth() + 1;
         var year = date.getFullYear();
-        return `${day}-${month}-${year}`;
+        return `${year}-${month}-${day}`;
       } else {
         return '';
       }

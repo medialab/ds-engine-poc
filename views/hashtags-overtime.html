@@ -2,10 +2,10 @@
   <spinner text="LOADING"/>
 </div>
 
-<div layout="column" ng-show="!loading">
+<div layout="column" ng-show="!loading" layout-padding>
   
-  <div layout-padding>
-    <h1>Hashtags over time</h1 
+  <div>
+    <h1>Hashtags over time</h1>
   </div>
 
   <div layout="row">
@@ -25,16 +25,17 @@
         ></daily-count-brushable>
       </div>
       <center>
-        <strong>Tweet volume over time</strong>
-        <span ng-show="startTime && startTime !== endTime"> - Selection: from {{startTime|date}} to {{endTime|date}}</span>
-        <span ng-show="!(startTime && startTime !== endTime)"> - Select a period</span>
+        <strong>Tweets volume over time</strong>
+        <br>
+        <span ng-show="startTime && startTime !== endTime">Selection: from {{startTime|dateCompact}} to {{endTime|dateCompact}}</span>
+        <span ng-show="!(startTime && startTime !== endTime)">From {{timeMin|dateCompact}} to {{timeMax|dateCompact}}</span>
       </center>
     </md-whiteframe>
     <div
       flex="30"
       layout="row"
       ariane-line
-      text="'Tweets volume'"
+      text="Tweets volume"
     >
     </div>
   </div>
@@ -58,8 +59,10 @@
     </md-whiteframe>
     <div
       flex="30"
+      layout="row"
+      ariane-line
+      text="Hashtags"
     >
-      <h3>Hashtags over {{startTime && startTime !== endTime ? 'this' : 'the whole'}} period</h3>
     </div>
   </div>
 
@@ -82,8 +85,10 @@
     </md-whiteframe>
     <div
       flex="30"
+      layout="row"
+      ariane-line
+      text="Tweets verbatim"
     >
-      <h3>Tweets for <em>{{selectedHashtag}}</em> over {{startTime && startTime !== endTime ? 'this' : 'the whole'}} period</h3>
     </div>
   </div>
 
