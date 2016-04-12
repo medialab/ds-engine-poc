@@ -25,7 +25,7 @@ angular.module('thisApp', [
       'hue-3': 'A100' // use shade A100 for the <code>md-hue-3</code> class
     })
     .warnPalette('pink')
-    .backgroundPalette('indigo', {
+    .backgroundPalette('grey', {
       'default': '50'
     })
 
