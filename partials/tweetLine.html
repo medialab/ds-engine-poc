@@ -3,9 +3,9 @@
   class="tweet-line"
 >
   <div layout="row">
-    <strong>{{tweet.from_user_realname}}&nbsp;</strong>
-    <small>@{{tweet.from_user_name}}&nbsp;</small>
-    <small>{{tweet.time|dateCompact}}</small>
+    <strong class="tweetline-username">{{tweet.from_user_realname}}&nbsp;</strong>
+    <small class="tweetline-mention">@{{tweet.from_user_name}}&nbsp;</small>
+    <small class="tweetline-date">{{tweet.time|dateCompact}}</small>
   </div>
   <div>
     {{tweet.text}}

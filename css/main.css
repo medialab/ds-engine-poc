@@ -104,6 +104,9 @@ md-whiteframe {
   padding: 6px;
   word-break: break-all;
 }
+.tweetline-date {
+  color: #999;
+}
 
 /* Misc */
 span.dot{
