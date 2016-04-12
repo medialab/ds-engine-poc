@@ -90,6 +90,13 @@ md-whiteframe {
   text-align: center;
 }
 
+/* tweet-line */
+.tweet-line {
+  /*font-family: Roboto, sans-serif;*/
+  border: 1px solid #EEE;
+  padding: 6px;
+}
+
 /* Misc */
 span.dot{
   width: 12px;

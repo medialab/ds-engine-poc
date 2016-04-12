@@ -4,7 +4,7 @@
 
 angular.module('thisApp.directives', [])
 
-  .directive('ngPressEnter', [function () {
+  .directive('ngPressEnter', function () {
     return function (scope, element, attrs) {
       element.bind("keydown keypress", function (event) {
         if(event.which === 13) {
@@ -14,7 +14,7 @@ angular.module('thisApp.directives', [])
         }
       })
     }
-  }])
+  })
 
   // A simple curve that can be synchronized to a brush
   .directive('dailyCount', function ($timeout, colors) {
@@ -250,7 +250,7 @@ angular.module('thisApp.directives', [])
     }
   })
 
-  .directive('hashtagLine', [function (){
+  .directive('hashtagLine', function (){
     return {
       restrict: 'E',
       scope: {
@@ -259,9 +259,19 @@ angular.module('thisApp.directives', [])
       },
       templateUrl: 'partials/hashtagLine.html',
     }
-  }])
+  })
 
-  .directive('sigmaNetwork', ['$window', '$timeout', function ($window, $timeout){
+  .directive('tweetLine', function (){
+    return {
+      restrict: 'E',
+      scope: {
+        tweet: '=',
+      },
+      templateUrl: 'partials/tweetLine.html',
+    }
+  })
+
+  .directive('sigmaNetwork', function ($window, $timeout){
     return {
       retrict: 'E',
       scope: {
@@ -434,9 +444,9 @@ angular.module('thisApp.directives', [])
 
       }
     }
-  }])
+  })
 
-  .directive('hashtagsUsersByPeriod', ['Facets', '$timeout', function (Facets, $timeout){
+  .directive('hashtagsUsersByPeriod', function (Facets, $timeout){
     return {
       restrict: 'E',
       scope: {
@@ -488,7 +498,7 @@ angular.module('thisApp.directives', [])
         }
       },
     }
-  }])
+  })
 
   .directive('hashtagsByPeriod', function (Facets, $timeout){
     return {
@@ -529,6 +539,51 @@ angular.module('thisApp.directives', [])
                 $scope.list = data.filter(d => {
                   return d.tweetCount >= $scope.minCount;
                 });
+                $scope.$apply();
+              });
+              $scope.$apply();
+            }, 0, false);
+          }
+        }
+      },
+    }
+  })
+
+  .directive('tweetVerbatims', function (Facets, $timeout){
+    return {
+      restrict: 'E',
+      scope: {
+        from: '=',
+        to: '=',
+        defaultFrom: '=',
+        defaultTo: '=',
+        search: '=',
+      },
+      templateUrl: 'partials/tweetVerbatims.html',
+      link: function($scope, el, attrs) {
+        $scope.loading = true;
+
+        $scope.$watchGroup(['from', 'to', 'defaultFrom', 'defaultTo', 'search'], function (newValues, oldValues, $scope) {
+          var from = newValues[0];
+          var to = newValues[1];
+          var defaultFrom = newValues[2];
+          var defaultTo = newValues[3];
+          var search = newValues[4];
+          if (from && to && from != to) {
+            displayFacet(from, to, search);
+          } else if (defaultFrom && defaultTo) {
+            displayFacet(defaultFrom, defaultTo, search);
+          }
+        })
+
+        function displayFacet(from, to, search) {
+          if (from && to){
+            $scope.loading = true;
+            $timeout(() => {
+              Facets.getTweetsByFilter(from, to, search).retrieveData(data => {
+                $scope.loading = false;
+                $scope.list = data;
+                console.log($scope.list)
                 $scope.$apply();
               });
               $scope.$apply();

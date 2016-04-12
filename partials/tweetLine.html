@@ -1,0 +1,13 @@
+<div
+  layout="column"
+  class="tweet-line"
+>
+  <div layout="row">
+    <strong>{{tweet.from_user_realname}}&nbsp;</strong>
+    <small>@{{tweet.from_user_name}}&nbsp;</small>
+    <small>{{tweet.time|dateCompact}}</small>
+  </div>
+  <div>
+    {{tweet.text}}
+  </div>
+</div>

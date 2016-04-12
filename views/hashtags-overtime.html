@@ -40,6 +40,19 @@
     </div>
   </div>
 
+  <div layout-padding ng-if="selectedHashtag && selectedHashtag != ''">
+    <h3>Tweets for {{selectedHashtag}} over {{startTime && startTime !== endTime ? 'this' : 'the whole'}} period</h3>
+    <div>
+      <tweet-verbatims
+        from="startTime_slowUpdate"
+        to="endTime_slowUpdate"
+        search="selectedHashtag"
+        default-from="timeMin"
+        default-to="timeMax"
+      ></tweet-verbatims>
+    </div>
+  </div>
+
   <footer>
   </footer>
 </div>

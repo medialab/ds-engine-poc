@@ -185,13 +185,27 @@ angular.module('thisApp.services', [])
 
     }
 
+    ns.getTweetsByFilter = function (from, to, search) {
+      const searchMD5 = md5(search)
+      return Facettage.requireFacet(`tweetList_search-from-${from}-to-${to}-search-${searchMD5}`, {
+        dependencies: ['tweetList'],
+        type: 'csv',
+        compute: function() {
+          const tweetList = Facettage.getFacet('tweetList').getData().filter(item => {
+            return item.time >= from && item.time <= to && item.text.search(search) >= 0;
+          });
+          return tweetList;
+        }
+      })
+    }
+
     // Get a network of #hashtags and @users with a time span
     ns.getHashtagUserNetworkForPeriod = function (from, to, tweetsLimit, hashtagsMinDegree_, usersMinDegree_, hashtagsLimit_, usersLimit_) {
       const hashtagsMinDegree = hashtagsMinDegree_ || 0;
       const usersMinDegree = usersMinDegree_ || 0;
       const hashtagsLimit = hashtagsLimit_ || 100000;
       const usersLimit = usersLimit_ || 100000;
-      return Facettage.newFacet(`hashtagUserNetwork-from-${from}-to-${to}-tlimit-${tweetsLimit}`, {
+      return Facettage.requireFacet(`hashtagUserNetwork-from-${from}-to-${to}-tlimit-${tweetsLimit}`, {
         dependencies: ['tweetList'],
         ephemeral: true,
         compute: function () {
