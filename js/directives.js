@@ -17,7 +17,7 @@ angular.module('thisApp.directives', [])
   }])
 
   // A simple curve that can be synchronized to a brush
-  .directive('dailyCount', ['$timeout', function ($timeout) {
+  .directive('dailyCount', function ($timeout, colors) {
     return {
       restrict: 'E',
       scope: {
@@ -82,7 +82,7 @@ angular.module('thisApp.directives', [])
                   .datum(data)
                   .attr("class", "area")
                   .attr("d", area)
-                  .style('fill', 'steelblue')
+                  .style('fill', colors.accent)
                   .style('clip-path', `url(#${elId}-clip)`);
 
               focus.append("g")
@@ -120,10 +120,10 @@ angular.module('thisApp.directives', [])
         });
       },
     }
-  }])
+  })
   
   // A curve with a brush
-  .directive('dailyCountBrushable', ['$timeout', function ($timeout) {
+  .directive('dailyCountBrushable', function ($timeout, colors) {
     return {
       restrict: 'E',
       scope: {
@@ -187,7 +187,7 @@ angular.module('thisApp.directives', [])
                   .datum(data)
                   .attr("class", "area")
                   .attr("d", area2)
-                  .style('fill', 'steelblue')
+                  .style('fill', colors.accent)
                   .style('clip-path', `url(#${elId}-clip)`);
 
               context.append("g")
@@ -240,7 +240,7 @@ angular.module('thisApp.directives', [])
         });
       },
     }
-  }])
+  })
 
   .directive('hashtagLine', [function (){
     return {
@@ -524,7 +524,7 @@ angular.module('thisApp.directives', [])
     }
   }])
 
-  .directive('spinner', [function (){
+  .directive('spinner', function (colors){
     return {
       restrict: 'E'
     , templateUrl: 'partials/spinner.html'
@@ -532,6 +532,7 @@ angular.module('thisApp.directives', [])
         text: '='
       }
     , link: function(scope, el, attrs) {
+        scope.colors = colors
 
         particlesJS("particles-js", {
           "particles": {
@@ -641,4 +642,4 @@ angular.module('thisApp.directives', [])
 
       }
     }
-  }])
+  })

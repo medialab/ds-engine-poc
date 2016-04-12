@@ -64,7 +64,7 @@ md-whiteframe {
   width: 160px;
   height: 160px;
   border-radius: 50%;
-  background-color: #444;
+  /*background-color: #444;*/
   overflow: hidden;
 }
 
