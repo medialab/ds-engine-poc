@@ -72,9 +72,14 @@ md-whiteframe {
 /* hashtag-line */
 .hashtag-line {
   font-family: Roboto Condensed, sans-serif;
+  cursor: pointer;
 }
 .hashtag-line:hover {
-  background-color: #DEF;
+  background-color: #EEE;
+}
+.hashtag-line.selected {
+  cursor: default;
+  background-color: #F0F4C3;
 }
 .hashtag-line-number {
   width: 60px;

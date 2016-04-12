@@ -255,6 +255,7 @@ angular.module('thisApp.directives', [])
       restrict: 'E',
       scope: {
         item: '=',
+        selected: '=',
       },
       templateUrl: 'partials/hashtagLine.html',
     }
@@ -348,6 +349,7 @@ angular.module('thisApp.directives', [])
           $window.s = sigmaInstance;
 
           sigmaInstance.settings({
+            font: 'Roboto Condensed',
             defaultLabelColor: '#666',
             edgeColor: 'default',
             defaultEdgeColor: '#ECE8E5',
@@ -488,7 +490,7 @@ angular.module('thisApp.directives', [])
     }
   }])
 
-  .directive('hashtagsByPeriod', ['Facets', '$timeout', function (Facets, $timeout){
+  .directive('hashtagsByPeriod', function (Facets, $timeout){
     return {
       restrict: 'E',
       scope: {
@@ -497,10 +499,12 @@ angular.module('thisApp.directives', [])
         defaultFrom: '=',
         defaultTo: '=',
         minCount: '=',
+        selectedHashtag: '=',
       },
       templateUrl: 'partials/hashtagsByPeriod.html',
       link: function($scope, el, attrs) {
         $scope.loading = true;
+
         $scope.$watchGroup(['from', 'to', 'defaultFrom', 'defaultTo'], function (newValues, oldValues, $scope) {
           var from = newValues[0];
           var to = newValues[1];
@@ -512,6 +516,9 @@ angular.module('thisApp.directives', [])
             displayFacet(defaultFrom, defaultTo);
           }
         })
+        $scope.selectItem = function(hashtag) {
+          $scope.selectedHashtag = hashtag;
+        }
 
         function displayFacet(from, to) {
           if (from && to){
@@ -530,7 +537,7 @@ angular.module('thisApp.directives', [])
         }
       },
     }
-  }])
+  })
 
   .directive('spinner', function (colors){
     return {

@@ -29,7 +29,11 @@
   
   <md-virtual-repeat-container id="hashtags-by-period-list-container">
     <div md-virtual-repeat="item in list | orderBy:'-tweetCount'" flex>
-      <hashtag-line item="item"/>
+      <hashtag-line
+        item="item"
+        selected="item.text == selectedHashtag"
+        ng-click="selectItem(item.text)"
+      ></hashtag-line>
     </md-virtual-repeat-container>
   </div>
 

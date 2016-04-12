@@ -7,7 +7,8 @@
   <div class="sigma-tools">
     <div layout="column">
       <md-button
-        class="md-icon-button md-accent"
+        class="md-icon-button"
+        ng-class="{'md-accent':spatializationRunning, 'md-primary':!spatializationRunning}"
         aria-label="Play/Pause"
         ng-click="toggleSpatialization()"
       >

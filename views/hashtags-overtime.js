@@ -11,6 +11,7 @@ angular.module('thisApp.hashtags-overtime', ['ngRoute'])
 
 .controller('HashtagsOvertimeController', function($scope, $location, Facets) {
   $scope.loading = true;
+  $scope.selectedHashtag;
   
   loadFacets(() => {
     // No callback here
