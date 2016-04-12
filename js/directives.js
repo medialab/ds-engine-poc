@@ -583,7 +583,6 @@ angular.module('thisApp.directives', [])
               Facets.getTweetsByFilter(from, to, search).retrieveData(data => {
                 $scope.loading = false;
                 $scope.list = data;
-                console.log($scope.list)
                 $scope.$apply();
               });
               $scope.$apply();
