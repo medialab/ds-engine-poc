@@ -1,8 +1,5 @@
 <div ng-if="loading">LOADING...</div>
 <div ng-if="!loading">
-  <div>
-    <p class="text-muted">Displaying only hashtags with {{minCount}}+ tweets over the period - {{list.length}} hashtags</p>
-  </div>
   <div layout="row" style="overflow-y: scroll;">
     <div flex="35">
       <table>
@@ -34,7 +31,13 @@
         selected="item.text == selectedHashtag"
         ng-click="selectItem(item.text)"
       ></hashtag-line>
-    </md-virtual-repeat-container>
-  </div>
+    </div>
+  </md-virtual-repeat-container>
 
+  <center>
+    <p>
+      <strong>Hashtags with {{minCount}}+ tweets over the period</strong>
+      <span class="count">{{list.length}}</span>
+    </p>
+  </center>
 </div>

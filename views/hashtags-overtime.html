@@ -5,51 +5,83 @@
 <div layout="column" ng-show="!loading">
   
   <div layout-padding>
-    <h1>Hashtags over time</h1>
+    <h1>Hashtags over time</h1 
   </div>
 
-  <md-whiteframe class="md-whiteframe-1dp" layout-padding>
-    <div>
-      <daily-count-brushable
-        id="BRUSH"
-        data="tweetsTotalDaily"
-        time-accessor="ttdGetTime"
-        volume-accessor="ttdGetVolume"
-        from="startTime"
-        to="endTime"
-      ></daily-count-brushable>
-    </div>
-    <center>
-      <strong>Tweet volume over time</strong>
-      <span ng-show="startTime && startTime !== endTime"> - Selection: from {{startTime|date}} to {{endTime|date}}</span>
-      <span ng-show="!(startTime && startTime !== endTime)"> - Select a period</span>
-    </center>
-  </md-whiteframe>
-  
-  <div layout-padding>
-    <h3>Hashtags over {{startTime && startTime !== endTime ? 'this' : 'the whole'}} period</h3>
-    <div>
-      <hashtags-by-period
-        from="startTime_slowUpdate"
-        to="endTime_slowUpdate"
-        default-from="timeMin"
-        default-to="timeMax"
-        min-count="5"
-        selected-hashtag="selectedHashtag"
-      ></hashtags-by-period>
+  <div layout="row" layout-padding>
+    <md-whiteframe
+      class="md-whiteframe-1dp"
+      layout-padding
+      flex="70"
+    >
+      <div>
+        <daily-count-brushable
+          id="BRUSH"
+          data="tweetsTotalDaily"
+          time-accessor="ttdGetTime"
+          volume-accessor="ttdGetVolume"
+          from="startTime"
+          to="endTime"
+        ></daily-count-brushable>
+      </div>
+      <center>
+        <strong>Tweet volume over time</strong>
+        <span ng-show="startTime && startTime !== endTime"> - Selection: from {{startTime|date}} to {{endTime|date}}</span>
+        <span ng-show="!(startTime && startTime !== endTime)"> - Select a period</span>
+      </center>
+    </md-whiteframe>
+    <div
+      flex="30"
+    >
+      <h3>Volume of tweets</h3>
     </div>
   </div>
 
-  <div layout-padding ng-if="selectedHashtag && selectedHashtag != ''">
-    <h3>Tweets for {{selectedHashtag}} over {{startTime && startTime !== endTime ? 'this' : 'the whole'}} period</h3>
-    <div>
-      <tweet-verbatims
-        from="startTime_slowUpdate"
-        to="endTime_slowUpdate"
-        search="selectedHashtag"
-        default-from="timeMin"
-        default-to="timeMax"
-      ></tweet-verbatims>
+  <div layout="row" layout-padding>
+    <md-whiteframe
+      class="md-whiteframe-1dp"
+      layout-padding
+      flex="70"
+    >
+      <div>
+        <hashtags-by-period
+          from="startTime_slowUpdate"
+          to="endTime_slowUpdate"
+          default-from="timeMin"
+          default-to="timeMax"
+          min-count="5"
+          selected-hashtag="selectedHashtag"
+        ></hashtags-by-period>
+      </div>
+    </md-whiteframe>
+    <div
+      flex="30"
+    >
+      <h3>Hashtags over {{startTime && startTime !== endTime ? 'this' : 'the whole'}} period</h3>
+    </div>
+  </div>
+
+  <div layout="row" layout-padding ng-show="selectedHashtag && selectedHashtag != ''">
+    <md-whiteframe
+      class="md-whiteframe-1dp"
+      layout-padding
+      flex="70"
+    >
+      <div>
+        <tweet-verbatims
+          from="startTime_slowUpdate"
+          to="endTime_slowUpdate"
+          search="selectedHashtag"
+          default-from="timeMin"
+          default-to="timeMax"
+          display="selectedHashtag && selectedHashtag != ''"
+        ></tweet-verbatims>
+      </div>
+    </md-whiteframe>
+    <div
+      flex="30"
+    >
+      <h3>Tweets for <em>{{selectedHashtag}}</em> over {{startTime && startTime !== endTime ? 'this' : 'the whole'}} period</h3>
     </div>
   </div>
 

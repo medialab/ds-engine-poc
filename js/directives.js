@@ -558,35 +558,41 @@ angular.module('thisApp.directives', [])
         defaultFrom: '=',
         defaultTo: '=',
         search: '=',
+        display: '=',
       },
       templateUrl: 'partials/tweetVerbatims.html',
       link: function($scope, el, attrs) {
         $scope.loading = true;
 
-        $scope.$watchGroup(['from', 'to', 'defaultFrom', 'defaultTo', 'search'], function (newValues, oldValues, $scope) {
+        $scope.$watchGroup(['from', 'to', 'defaultFrom', 'defaultTo', 'search', 'display'], function (newValues, oldValues, $scope) {
           var from = newValues[0];
           var to = newValues[1];
           var defaultFrom = newValues[2];
           var defaultTo = newValues[3];
           var search = newValues[4];
+          var display = newValues[5];
           if (from && to && from != to) {
-            displayFacet(from, to, search);
+            displayFacet(from, to, search, display);
           } else if (defaultFrom && defaultTo) {
-            displayFacet(defaultFrom, defaultTo, search);
+            displayFacet(defaultFrom, defaultTo, search, display);
           }
         })
 
-        function displayFacet(from, to, search) {
-          if (from && to){
-            $scope.loading = true;
-            $timeout(() => {
-              Facets.getTweetsByFilter(from, to, search).retrieveData(data => {
-                $scope.loading = false;
-                $scope.list = data;
+        function displayFacet(from, to, search, display) {
+          if (display) {
+            if (from && to){
+              $scope.loading = true;
+              $timeout(() => {
+                Facets.getTweetsByFilter(from, to, search).retrieveData(data => {
+                  $scope.loading = false;
+                  $scope.list = data;
+                  $scope.$apply();
+                });
                 $scope.$apply();
-              });
-              $scope.$apply();
-            }, 0, false);
+              }, 0, false);
+            }
+          } else {
+            $scope.list = []
           }
         }
       },

@@ -1,5 +1,5 @@
-<div ng-if="loading">LOADING...</div>
-<div ng-if="!loading">  
+<div ng-show="loading">LOADING...</div>
+<div ng-show="!loading">  
   <md-virtual-repeat-container id="hashtags-by-period-list-container">
     <div md-virtual-repeat="item in list | orderBy:'time'" flex>
       <tweet-line
