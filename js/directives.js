@@ -139,9 +139,17 @@ angular.module('thisApp.directives', [])
 
         el.html('<div class="brush-curve">Loading...</div>');
 
-        $scope.$watch('data', () => {
+        window.addEventListener('resize', redraw);
+        $scope.$on('$destroy', function(){
+          window.removeEventListener('resize', redraw)
+        })
+
+        $scope.$watch('data', redraw);
+
+        function redraw() {
           if ($scope.data !== undefined){
             $timeout(() => {
+              el.html('<div class="brush-curve">Loading...</div>');
 
               var data = $scope.data;
               var getTime = $scope.timeAccessor;
@@ -149,7 +157,7 @@ angular.module('thisApp.directives', [])
               $(`#${elId} .brush-curve`).html('');
 
               var margin = {top: 10, right: 40, bottom: 20, left: 40},
-                  width = $(`#${elId} .brush-curve`).width() - margin.left - margin.right,
+                  width = $(`#${elId} .brush-curve`).width() - margin.left - margin.right - 6,
                   height = 100 - margin.top - margin.bottom;
 
               var parseDate = d3.time.format("%b %Y").parse;
@@ -237,7 +245,7 @@ angular.module('thisApp.directives', [])
               }
             }, 0, false);
           }
-        });
+        }
       },
     }
   })

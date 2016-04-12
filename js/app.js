@@ -17,8 +17,8 @@ angular.module('thisApp', [
   $routeProvider.otherwise({redirectTo: '/'});
 
   $mdThemingProvider.theme('default')
-    .primaryPalette('indigo')
-    .accentPalette('teal', {
+    .primaryPalette('blue-grey')
+    .accentPalette('light-green', {
       'default': '400',
       'hue-1': '100', // use shade 100 for the <code>md-hue-1</code> class
       'hue-2': '600', // use shade 600 for the <code>md-hue-2</code> class
@@ -32,6 +32,6 @@ angular.module('thisApp', [
 })
 // Other colors
 .constant('colors', {
-  primary: '#3F51B5',
-  accent: '#4DB6AC'
+  primary: '#607D8B',
+  accent: '#8BC34A'
 })
