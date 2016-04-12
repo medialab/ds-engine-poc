@@ -549,6 +549,16 @@ angular.module('thisApp.directives', [])
     }
   })
 
+  .directive('arianeLine', function(){
+    return {
+      restrict: 'A',
+      scope: {
+        text: '=',
+      },
+      templateUrl: 'partials/arianeLine.html',
+    }
+  })
+
   .directive('tweetVerbatims', function (Facets, $timeout){
     return {
       restrict: 'E',
