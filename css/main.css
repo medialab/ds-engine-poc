@@ -15,6 +15,7 @@ md-whiteframe {
 #hashtags-by-period-list-container {
   height: 292px;
   width: 100%;
+  background-color: rgba(255, 255, 255, 0.8);
 }
 .hashtag-line {
   border-bottom: 1px solid #ddd;
@@ -69,6 +70,9 @@ md-whiteframe {
 
 
 /* hashtag-line */
+.hashtag-line {
+  font-family: Roboto Condensed, sans-serif;
+}
 .hashtag-line:hover {
   background-color: #DEF;
 }
