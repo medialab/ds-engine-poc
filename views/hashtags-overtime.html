@@ -2,16 +2,21 @@
   <spinner text="LOADING"/>
 </div>
 
-<div layout="column" ng-show="!loading" layout-padding>
+<div layout="column" ng-show="!loading">
   
-  <div>
-    <h1>Hashtags over time</h1>
+  <div
+    layout="row"
+  >
+    <div flex="85" class="ariane-headline">
+      <h1>Hashtags over time</h1>
+    </div>
   </div>
 
   <div layout="row">
     <md-whiteframe
       class="md-whiteframe-1dp"
       layout-padding
+      layout-margin
       flex="70"
     >
       <div>
@@ -41,9 +46,26 @@
   </div>
 
   <div layout="row">
+    <div
+      flex="70"
+      layout-margin
+    ></div>
+    <div
+      flex="30"
+    >
+      <center>
+        <em>
+          Select period
+        </em>
+      </center>
+    </div>
+  </div>
+
+  <div layout="row">
     <md-whiteframe
       class="md-whiteframe-1dp"
       layout-padding
+      layout-margin
       flex="70"
     >
       <div>
@@ -70,6 +92,7 @@
     <md-whiteframe
       class="md-whiteframe-1dp"
       layout-padding
+      layout-margin
       flex="70"
     >
       <div>

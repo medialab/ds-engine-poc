@@ -75,6 +75,13 @@ md-whiteframe {
 }
 
 /* Ariane line */
+.ariane-headline {
+  border-bottom: 2px dotted #999;
+}
+.ariane-headline h1 {
+  margin-bottom: 12px;
+  padding-left: 12px;
+}
 .ariane-line-left {
   border-right: 2px dotted #999;
 }
