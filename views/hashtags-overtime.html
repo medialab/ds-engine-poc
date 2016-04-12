@@ -8,7 +8,7 @@
     <h1>Hashtags over time</h1 
   </div>
 
-  <div layout="row" layout-padding>
+  <div layout="row">
     <md-whiteframe
       class="md-whiteframe-1dp"
       layout-padding
@@ -32,12 +32,21 @@
     </md-whiteframe>
     <div
       flex="30"
+      layout="row"
     >
-      <h3>Volume of tweets</h3>
+      <div class="ariane-line-left" flex="50">
+      </div>
+      <div class="ariane-line-right" flex="50" layout="column">
+        <div class="ariane-line-content">
+          <div class="ariane-line-content-inner">
+            Volume of tweets
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
-  <div layout="row" layout-padding>
+  <div layout="row">
     <md-whiteframe
       class="md-whiteframe-1dp"
       layout-padding
@@ -61,7 +70,7 @@
     </div>
   </div>
 
-  <div layout="row" layout-padding ng-show="selectedHashtag && selectedHashtag != ''">
+  <div layout="row" ng-show="selectedHashtag && selectedHashtag != ''">
     <md-whiteframe
       class="md-whiteframe-1dp"
       layout-padding

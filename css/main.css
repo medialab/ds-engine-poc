@@ -74,12 +74,34 @@ md-whiteframe {
   overflow: hidden;
 }
 
+/* Ariane line */
+.ariane-line-left {
+  border-right: 2px dotted #999;
+}
+.ariane-line-right {
+}
+.ariane-line-content {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  text-align: center;
+  margin-left: -53px;
+  margin-top: 20px;
+  background-color: #FFF;
+  color: #999;
+  border: 2px dotted #999;
+}
+.ariane-line-content-inner {
+  margin-top: 50px; /* poussé de la moitié de hauteur de viewport */
+  transform: translateY(-50%); /* tiré de la moitié de sa propre hauteur */
+}
 
 /* hashtag-line */
 .hashtag-line {
   font-family: Roboto Condensed, sans-serif;
   cursor: pointer;
   word-break: break-all;
+  overflow: hidden;
 }
 .hashtag-line:hover {
   background-color: #EEE;
@@ -103,6 +125,7 @@ md-whiteframe {
   border: 1px solid #EEE;
   padding: 6px;
   word-break: break-all;
+  overflow: hidden;
 }
 .tweetline-date {
   color: #999;
@@ -119,7 +142,6 @@ span.dot{
 td.key-cell {
   padding-right: 24px;
 }
-
 
 /* Sigma */
 .sigma-parent {
