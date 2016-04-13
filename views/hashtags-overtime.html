@@ -59,7 +59,7 @@
       flex="30"
       ariane-spot
       icon="keyboard_arrow_down"
-      text="Select a period"
+      text="{{ (startTime && startTime !== endTime) ? 'From '+(startTime|dateCompact)+' to '+(endTime|dateCompact) : 'Select a period'}}"
     >
     </div>
   </div>
