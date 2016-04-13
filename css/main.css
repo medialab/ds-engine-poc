@@ -78,6 +78,9 @@ md-whiteframe {
 .ariane-line-left {
   border-right: 2px dotted #999;
 }
+.ariane-line-left.hide-line {
+  border-right: 2px solid rgba(255, 255, 255, 0);
+}
 .ariane-line-right {
 }
 .ariane-line-content {
@@ -86,7 +89,6 @@ md-whiteframe {
   border-radius: 50%;
   text-align: center;
   margin-left: -53px;
-  margin-top: 20px;
   background-color: #FFF;
   color: #666;
   border: 2px dotted #999;
@@ -97,7 +99,7 @@ md-whiteframe {
 }
 .ariane-line-spot {
   margin-left: 15%;
-  margin-top: -20px;
+  margin-top: -16px;
   position: absolute;
 }
 .ariane-line-spot-icon {
@@ -105,9 +107,10 @@ md-whiteframe {
   margin-left: -13px;
 }
 .ariane-line-spot-text {
-  margin-top: 12px;
+  margin-top: 14px;
   font-size: small;
-  transform: translateY(-50%);
+  transform: translateY(-100%);
+  padding-right: 6px;
 }
 
 

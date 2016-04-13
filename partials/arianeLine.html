@@ -1,7 +1,18 @@
-<div class="ariane-line-left" flex="50">
+<div
+	class="ariane-line-left"
+	ng-class="{'hide-line': hideLine}"
+	flex="50"
+>
 </div>
-<div class="ariane-line-right" flex="50" layout="column">
-  <div class="ariane-line-content" ng-if="text && text !== ''">
+<div
+	class="ariane-line-right"
+	flex="50"
+	layout="column"
+>
+  <div
+  	class="ariane-line-content"
+  	ng-if="text && text !== ''"
+  >
     <div class="ariane-line-content-inner">
       {{text}}
     </div>

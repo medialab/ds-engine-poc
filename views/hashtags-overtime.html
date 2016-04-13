@@ -90,6 +90,19 @@
     </div>
   </div>
 
+  <div layout="row">
+    <div
+      flex="70"
+    ></div>
+    <div
+      flex="30"
+      ariane-spot
+      icon="keyboard_arrow_down"
+      text="Select a hashtag"
+    >
+    </div>
+  </div>
+
   <div layout="row" ng-show="selectedHashtag && selectedHashtag != ''">
     <md-whiteframe
       class="md-whiteframe-1dp"
@@ -112,6 +125,7 @@
       layout="row"
       ariane-line
       text="Tweets verbatim"
+      hide-line="true"
     >
     </div>
   </div>

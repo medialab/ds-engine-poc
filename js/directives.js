@@ -554,6 +554,7 @@ angular.module('thisApp.directives', [])
       restrict: 'A',
       scope: {
         text: '@',
+        hideLine: '='
       },
       templateUrl: 'partials/arianeLine.html',
     }
