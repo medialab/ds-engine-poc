@@ -13,12 +13,12 @@ md-whiteframe {
 }
 
 #hashtags-by-period-list-container {
-  height: 292px;
+  height: 300px;
   width: 100%;
   background-color: rgba(255, 255, 255, 0.8);
 }
 #tweet-verbatim-list-container {
-  height: 292px;
+  height: 400px;
   width: 100%;
   background-color: rgba(255, 255, 255, 0.8);
 }
@@ -85,7 +85,7 @@ md-whiteframe {
   margin-bottom: 12px;
 }
 .ariane-line-left {
-  border-right: 2px dotted #999;
+  border-right: 2px dotted #BBB;
 }
 .ariane-line-left.hide-line {
   border-right: 2px solid rgba(255, 255, 255, 0);
@@ -99,8 +99,8 @@ md-whiteframe {
   text-align: center;
   margin-left: -53px;
   background-color: #FFF;
-  color: #666;
-  border: 2px dotted #999;
+  color: #777;
+  border: 2px dotted #BBB;
 }
 .ariane-line-content-inner {
   margin-top: 50px; /* poussé de la moitié de hauteur de viewport */
@@ -112,6 +112,7 @@ md-whiteframe {
   position: absolute;
 }
 .ariane-line-spot-icon {
+  color: #BBB;
   width: 24px;
   margin-left: -11px;
 }
@@ -120,6 +121,7 @@ md-whiteframe {
   font-size: small;
   transform: translateY(-100%);
   padding-right: 6px;
+  color: #999;
 }
 
 
