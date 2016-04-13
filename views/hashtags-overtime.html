@@ -7,7 +7,7 @@
   <div
     layout="row"
   >
-    <div flex="70" layout-margin>
+    <div flex="70">
       <h1>Hashtags over time</h1>
     </div>
     <div
@@ -22,8 +22,8 @@
     <md-whiteframe
       class="md-whiteframe-1dp"
       layout-padding
-      layout-margin
       flex="70"
+      style="overflow: hidden;"
     >
       <div>
         <daily-count-brushable
@@ -54,16 +54,19 @@
   <div layout="row">
     <div
       flex="70"
-      layout-margin
     ></div>
     <div
       flex="30"
     >
-      <center>
-        <em>
+      <div class="ariane-line-spot" layout="row">
+        <div class="ariane-line-spot-icon">
+        <!-- X -->
+          <i class="material-icons">keyboard_arrow_down</i>
+        </div>
+        <div class="ariane-line-spot-text">
           Select period
-        </em>
-      </center>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -71,7 +74,6 @@
     <md-whiteframe
       class="md-whiteframe-1dp"
       layout-padding
-      layout-margin
       flex="70"
     >
       <div>
@@ -98,7 +100,6 @@
     <md-whiteframe
       class="md-whiteframe-1dp"
       layout-padding
-      layout-margin
       flex="70"
     >
       <div>

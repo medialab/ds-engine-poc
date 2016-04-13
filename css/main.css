@@ -95,6 +95,20 @@ md-whiteframe {
   margin-top: 50px; /* poussé de la moitié de hauteur de viewport */
   transform: translateY(-50%); /* tiré de la moitié de sa propre hauteur */
 }
+.ariane-line-spot {
+  margin-left: 15%;
+  margin-top: -20px;
+  position: absolute;
+}
+.ariane-line-spot-icon {
+  width: 24px;
+  margin-left: -13px;
+}
+.ariane-line-spot-text {
+  margin-top: 10px;
+  transform: translateY(-50%);
+}
+
 
 /* hashtag-line */
 .hashtag-line {
