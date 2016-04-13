@@ -105,7 +105,8 @@ md-whiteframe {
   margin-left: -13px;
 }
 .ariane-line-spot-text {
-  margin-top: 10px;
+  margin-top: 12px;
+  font-size: small;
   transform: translateY(-50%);
 }
 

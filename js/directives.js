@@ -559,6 +559,17 @@ angular.module('thisApp.directives', [])
     }
   })
 
+  .directive('arianeSpot', function(){
+    return {
+      restrict: 'A',
+      scope: {
+        text: '@',
+        icon: '@',
+      },
+      templateUrl: 'partials/arianeSpot.html',
+    }
+  })
+
   .directive('tweetVerbatims', function (Facets, $timeout){
     return {
       restrict: 'E',
