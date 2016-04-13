@@ -17,6 +17,11 @@ md-whiteframe {
   width: 100%;
   background-color: rgba(255, 255, 255, 0.8);
 }
+#tweet-verbatim-list-container {
+  height: 292px;
+  width: 100%;
+  background-color: rgba(255, 255, 255, 0.8);
+}
 .hashtag-line {
   border-bottom: 1px solid #ddd;
   box-sizing: border-box;
@@ -120,6 +125,7 @@ md-whiteframe {
   cursor: pointer;
   word-break: break-all;
   overflow: hidden;
+  height: ;
 }
 .hashtag-line:hover {
   background-color: #EEE;

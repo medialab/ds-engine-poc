@@ -1,43 +1,41 @@
-<div ng-if="loading">LOADING...</div>
-<div ng-if="!loading">
-  <div layout="row" style="overflow-y: scroll;">
-    <div flex="35">
-      <table>
-        <tr>
-          <td class="text-muted hashtag-line-number">
-            tweets
-          </td>
-          <td class="text-muted">
-            hashtag
-          </td>
-        </tr>
-      </table>
-    </div>
-    <div flex="35" class="text-muted center">
-      <strong>Date</strong> first / median / last
-    </div>
-    <div flex="15" class="text-muted center">
-      <strong>Favorite</strong> mean / max
-    </div>
-    <div flex="15" class="text-muted center">
-      <strong>RT</strong> mean / max
-    </div>
+<div layout="row" style="overflow-y: scroll;">
+  <div flex="35">
+    <table>
+      <tr>
+        <td class="text-muted hashtag-line-number">
+          tweets
+        </td>
+        <td class="text-muted">
+          hashtag
+        </td>
+      </tr>
+    </table>
   </div>
-  
-  <md-virtual-repeat-container id="hashtags-by-period-list-container">
-    <div md-virtual-repeat="item in list | orderBy:'-tweetCount'" flex>
-      <hashtag-line
-        item="item"
-        selected="item.text == selectedHashtag"
-        ng-click="selectItem(item.text)"
-      ></hashtag-line>
-    </div>
-  </md-virtual-repeat-container>
-
-  <center>
-    <p>
-      <span class="count">{{list.length}}</span>
-      <strong>Hashtags with {{minCount}}+ tweets over the period</strong>
-    </p>
-  </center>
+  <div flex="35" class="text-muted center">
+    <strong>Date</strong> first / median / last
+  </div>
+  <div flex="15" class="text-muted center">
+    <strong>Favorite</strong> mean / max
+  </div>
+  <div flex="15" class="text-muted center">
+    <strong>RT</strong> mean / max
+  </div>
 </div>
+
+<md-virtual-repeat-container id="hashtags-by-period-list-container">
+  <div ng-if="loading">LOADING</div>
+  <div ng-show="!loading" md-virtual-repeat="item in list | orderBy:'-tweetCount'" flex>
+    <hashtag-line
+      item="item"
+      selected="item.text == selectedHashtag"
+      ng-click="selectItem(item.text)"
+    ></hashtag-line>
+  </div>
+</md-virtual-repeat-container>
+
+<center>
+  <p>
+    <span class="count">{{list.length}}</span>
+    <strong>Hashtags with {{minCount}}+ tweets over the period</strong>
+  </p>
+</center>

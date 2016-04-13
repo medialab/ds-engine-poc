@@ -1,16 +1,14 @@
-<div ng-show="loading">LOADING...</div>
-<div ng-show="!loading">  
-  <md-virtual-repeat-container id="hashtags-by-period-list-container">
-    <div md-virtual-repeat="item in list | orderBy:'time'" flex>
-      <tweet-line
-        tweet="item"
-      ></tweet-line>
-    </div>
-  </md-virtual-repeat-container>
-  <center>
-    <p>
-      <span class="count">{{list.length}}</span>
-      <strong>Tweets for <em>{{selectedHashtag}}</em> over the period</strong>
-    </p>
-  </center>
-</div>
+<md-virtual-repeat-container id="tweet-verbatim-list-container">
+  <div ng-if="loading">LOADING</div>
+  <div ng-show="!loading" md-virtual-repeat="item in list | orderBy:'time'" flex>
+    <tweet-line
+      tweet="item"
+    ></tweet-line>
+  </div>
+</md-virtual-repeat-container>
+<center>
+  <p>
+    <span class="count">{{list.length}}</span>
+    <strong>Tweets for <em>{{selectedHashtag}}</em> over the period</strong>
+  </p>
+</center>
