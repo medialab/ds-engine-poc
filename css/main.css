@@ -80,6 +80,10 @@ md-whiteframe {
 }
 
 /* Ariane line */
+.ariane-stacked-panel {
+  margin-left: 12px;
+  margin-bottom: 12px;
+}
 .ariane-line-left {
   border-right: 2px dotted #999;
 }
@@ -109,7 +113,7 @@ md-whiteframe {
 }
 .ariane-line-spot-icon {
   width: 24px;
-  margin-left: -13px;
+  margin-left: -11px;
 }
 .ariane-line-spot-text {
   margin-top: 14px;
